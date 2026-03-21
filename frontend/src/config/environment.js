@@ -16,7 +16,7 @@ const CONFIGS = {
     development: {
         // BASE_URL: 'http://192.168.1.2:8080/api',
 
-        BASE_URL: 'http://10.0.2.2:8081/api',
+        BASE_URL: 'http://192.168.1.12:8080/api',
         NAME: 'development'
     }
 };

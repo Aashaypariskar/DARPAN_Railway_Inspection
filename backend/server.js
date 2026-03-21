@@ -229,10 +229,21 @@ sequelize.authenticate()
             socket.on('disconnect', () => console.log(`[SOCKET] Client disconnected: ${socket.id}`));
         });
 
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`[FATAL] Port ${PORT} already in use. Exhausted options.`);
+                process.exit(1);
+            }
+            if (err.code === 'ECONNRESET') {
+                console.warn('[SERVER WARNING] Connection reset by client. Ignoring to prevent crash.');
+                return;
+            }
+            console.error('[SERVER ERROR]', err.message);
+        });
+
         server.listen(PORT, '0.0.0.0', () => {
             console.log(`--- BACKEND IS LIVE (Real-time Enabled) ---`);
             console.log(`Listening on http://localhost:${PORT}`);
-            // console.log(`Or http://192.168.1.2:${PORT} (for mobile)`);
             console.log(`Or http://192.168.1.12:${PORT} (for mobile)`);
         });
     })
