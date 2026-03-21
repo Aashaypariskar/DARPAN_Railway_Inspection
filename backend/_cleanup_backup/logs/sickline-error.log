@@ -1,0 +1,21 @@
+{
+  "message": "Data truncated for column 'status' at row 1",
+  "sql": "INSERT INTO `sickline_answers` (`session_id`,`compartment_id`,`subcategory_id`,`activity_type`,`question_id`,`status`,`createdAt`,`updatedAt`) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE `session_id`=VALUES(`session_id`),`compartment_id`=VALUES(`compartment_id`),`subcategory_id`=VALUES(`subcategory_id`),`activity_type`=VALUES(`activity_type`),`question_id`=VALUES(`question_id`),`status`=VALUES(`status`),`updatedAt`=VALUES(`updatedAt`);",
+  "original": {
+    "code": "WARN_DATA_TRUNCATED",
+    "errno": 1265,
+    "sqlState": "01000",
+    "sqlMessage": "Data truncated for column 'status' at row 1",
+    "sql": "INSERT INTO `sickline_answers` (`session_id`,`compartment_id`,`subcategory_id`,`activity_type`,`question_id`,`status`,`createdAt`,`updatedAt`) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE `session_id`=VALUES(`session_id`),`compartment_id`=VALUES(`compartment_id`),`subcategory_id`=VALUES(`subcategory_id`),`activity_type`=VALUES(`activity_type`),`question_id`=VALUES(`question_id`),`status`=VALUES(`status`),`updatedAt`=VALUES(`updatedAt`);",
+    "parameters": [
+      1,
+      "NA",
+      119,
+      "Major",
+      3000,
+      "AVAILABLE",
+      "2026-02-21 07:45:59",
+      "2026-02-21 07:45:59"
+    ]
+  }
+}

@@ -1,0 +1,370 @@
+
+=== EXACT DB OUTPUT FOR LAVATORY AREA (ID: 123) ===
+
+>> ITEM: Lavatory Flooring
+ - Check the condition of the lavatory flooring and floor drain
+ - Attention to the uprooted PVC flooring edges with Silicon sealant
+/Moulding patti/ adhesive
+ - Fitment of New Floor Drain Trap
+ - Attention to the loose floor drain trap
+ - Fitment of new PVC flooring
+ - Check the condition of the lavatory flooring and floor drain
+ - Attention to the uprooted PVC flooring edges with Silicon sealant
+/Moulding patti/ adhesive
+ - Fitment of New Floor Drain Trap
+ - Attention to the loose floor drain trap
+ - Fitment of new PVC flooring
+
+>> ITEM: Wall Panels & celling panel
+ - Check condition & fitting of wall panels, ceiling panel
+ - Attention to the loose panels
+ - Replacement of damaged/broken panels
+ - Touch Up Painting of shabby panels
+ - Check condition & fitting of wall panels, ceiling panel
+ - Attention to the loose panels
+ - Replacement of damaged/broken panels
+ - Touch Up Painting of shabby panels
+
+>> ITEM: Frosted Glass
+ - Check the condition of the frosted glass & hopper window
+ - Fitment of frosted glass, grill, window and rubber profile,
+ - Attention to locking arrangement and rubber profile.
+ - Check the condition of the frosted glass & hopper window
+ - Fitment of frosted glass, grill, window and rubber profile,
+ - Attention to locking arrangement and rubber profile.
+
+>> ITEM: Mirror and Mirror Fittings
+ - Checking for availability of Mirror and its fittings
+ - Fitment of new mirror if missing
+ - Attention to the mirror if loose fittings
+ - Checking for availability of Mirror and its fittings
+ - Fitment of new mirror if missing
+ - Attention to the mirror if loose fittings
+
+>> ITEM: Wash Basin Jayson Cock/Tap
+ - Check availability/ working of wash basin Jayson cock/ tap.
+ - Attention if loose/leakage
+ - Fitment of new after removing old
+ - Check availability/ working of wash basin Jayson cock/ tap.
+ - Attention if loose/leakage
+ - Fitment of new after removing old
+
+>> ITEM: Wash Basin Drainage
+ - Check the fitment of the inner wash basin, drain pipe & its accessories
+ - Attention to the loose fittings
+ - Fitment of new wash basin drain pipe and its ancillaries
+ - Application of silicon sealant in the gap between the washbasin drian & floor panel. Washabsin and side panel
+ - checking for leakage through Outer wash basin Pipe
+ - Attention to the water seepage
+ - Check the fitment of the inner wash basin, drain pipe & its accessories
+ - Attention to the loose fittings
+ - Fitment of new wash basin drain pipe and its ancillaries
+ - Application of silicon sealant in the gap between the washbasin drian & floor panel. Washabsin and side panel
+ - checking for leakage through Outer wash basin Pipe
+ - Attention to the water seepage
+
+>> ITEM: Flusher Valve
+ - Check availability/working/fittment of all flusher valve
+ - Attention to Loose flusher valve
+ - Repair of Flusher Valve
+ - Attention to the leakge through flusher valve
+ - Fitment of new flusher valve
+ - Check availability/working/fittment of all flusher valve
+ - Attention to Loose flusher valve
+ - Repair of Flusher Valve
+ - Attention to the leakge through flusher valve
+ - Fitment of new flusher valve
+
+>> ITEM: Wall Protector
+ - Check availability/condition of wall protector
+ - Attention of loose wall protector
+ - Fitment of new wall protector
+ - Check availability/condition of wall protector
+ - Attention of loose wall protector
+ - Fitment of new wall protector
+
+>> ITEM: Fish Tail
+ - Check availability/condition of fish tail
+ - Replacement of broken fish tail
+ - attention to loose , choke fish tail
+ - Check availability/condition of fish tail
+ - Replacement of broken fish tail
+ - attention to loose , choke fish tail
+
+>> ITEM: Water Tank and its pipeline/connections
+ - Check leakage in the water tank and its pipeline & ancillary
+ - Attention to leakage in all pipe lines , air vent
+ - Replacement of air vent if defective
+ - Ensure proper securing of water tank and its pipe line
+ - Replacement of pipe line if damaged
+ - Check leakage in the water tank and its pipeline & ancillary
+ - Attention to leakage in all pipe lines , air vent
+ - Replacement of air vent if defective
+ - Ensure proper securing of water tank and its pipe line
+ - Replacement of pipe line if damaged
+
+>> ITEM: Tower Bolt
+ - Check availability, working of tower bolt/sliding latches/Turning latches of the lavatory door
+ - Replacement of broken , defective tower bolt/sliding latches/Turning latches of lavatory door
+ - Attention to loose tower bolt/sliding latches/Turning latches of the lavatory door
+ - Check availability, working of tower bolt/sliding latches/Turning latches of the lavatory door
+ - Replacement of broken , defective tower bolt/sliding latches/Turning latches of lavatory door
+ - Attention to loose tower bolt/sliding latches/Turning latches of the lavatory door
+
+>> ITEM: General Pipeline & drain pipes
+ - Check condition /fittment of all water supply system pipeline
+and all drain pipeline
+ - Attention to loose/damaged all water supply system pipeline and all drain pipeline
+ - Replacement of pipeline whenever required
+ - Check condition /fittment of all water supply system pipeline
+and all drain pipeline
+ - Attention to loose/damaged all water supply system pipeline and all drain pipeline
+ - Replacement of pipeline whenever required
+
+>> ITEM: Dustbin with Garbage Bag
+ - Check the availability/ condition of the dustbin/ watestbin.
+ - Replacement of Wastebin if defective or unavailable
+ - Securing of Wastebin with wire rope
+ - Fixing of dustbins properly on the  lavtory support wall panels
+ - Check the availability/ condition of the dustbin/ watestbin.
+ - Replacement of Wastebin if defective or unavailable
+ - Securing of Wastebin with wire rope
+ - Fixing of dustbins properly on the  lavtory support wall panels
+
+>> ITEM: Liquid Soap Dispenser
+ - Check availablity/condition of liquid soap dispenser
+ - Provision of new if defective/defficient
+ - Attention to loose liquid soap dispencer
+ - Provision of new if defective/defficient
+ - Check availablity/condition of liquid soap dispenser
+ - Provision of new if defective/defficient
+ - Attention to loose liquid soap dispencer
+ - Provision of new if defective/defficient
+
+>> ITEM: Toilet Paper Roll Bracket
+ - Check availability/condition of toilet papar roll bracket
+ - Attention to loose Toilet Soap Dispenser
+ - Check availability/condition of toilet papar roll bracket
+ - Attention to loose Toilet Soap Dispenser
+
+>> ITEM: Odour Control Container
+ - Check availability of odour control container
+ - Attention to loose odour control container
+ - Check availability of odour control container
+ - Attention to loose odour control container
+
+>> ITEM: Mug & Chain
+ - Provision of new if defective/deficient
+ - Check availability of Mug & Chain
+ - Provision of new if defective/deficient
+ - Attention to loose Mug & Chain
+ - Provision of new if defective/deficient
+ - Check availability of Mug & Chain
+ - Provision of new if defective/deficient
+ - Attention to loose Mug & Chain
+
+>> ITEM: Health Faucet
+ - Check availabilty/leakage/damaged of health faucet
+ - Provision of new if damaged/deficient
+ - Attention to leakage in health faucet in its fitting
+ - Check availabilty/leakage/damaged of health faucet
+ - Provision of new if damaged/deficient
+ - Attention to leakage in health faucet in its fitting
+
+>> ITEM: Ventilation Arrangement
+ - Check condition of ventilation arrangement
+ - Provision of new ventilation grill if damaged/deficient
+ - Attention to loose ventilation grill
+ - Check condition of ventilation arrangement
+ - Provision of new ventilation grill if damaged/deficient
+ - Attention to loose ventilation grill
+
+>> ITEM: Lav door spring
+ - check availability /condition of lav door spring
+ - Provision of new lav door spring if defective & deficient
+ - Attention to loose lav door spring
+ - check availability /condition of lav door spring
+ - Provision of new lav door spring if defective & deficient
+ - Attention to loose lav door spring
+
+>> ITEM: Lav Door Stopper
+ - check availability /condition of lav door stopper
+ - Provision of new lav door stopper if  deficient
+ - Attention to loose lav door stopper
+ - check availability /condition of lav door stopper
+ - Provision of new lav door stopper if  deficient
+ - Attention to loose lav door stopper
+
+>> ITEM: Lavtory Door Pivot/Hinge
+ - Check condition of lavtory door pivot/hinge
+ - Provision of new if broken/defective
+ - Attention to loose lavtory door pivot/hinge
+ - Check condition of lavtory door pivot/hinge
+ - Provision of new if broken/defective
+ - Attention to loose lavtory door pivot/hinge
+
+>> ITEM: Acrylic/Vinyl Stickers
+ - Checking of Sticker
+ - Removal of defective Sticker
+ - Fitment of new sticker
+ - Attention to the loose stickers
+ - Checking of Sticker
+ - Removal of defective Sticker
+ - Fitment of new sticker
+ - Attention to the loose stickers
+
+>> ITEM: Squat Pan/Commode Fittings
+ - Check the condition of Squat Pan/Commode Fittings
+ - Attention to loose Squat Pan/Commode Fittings
+ - Availability of ccr on the western commode if broken replaced new
+ - Application of silicon selant at edges of squat pan
+ - Check the condition of Squat Pan/Commode Fittings
+ - Attention to loose Squat Pan/Commode Fittings
+ - Availability of ccr on the western commode if broken replaced new
+ - Application of silicon selant at edges of squat pan
+
+>> ITEM: Lavtory Hand Rail
+ - Check the availability of lavtory hand rail
+ - Attention to the loose lavatory hand rail
+ - provision of new if deficient
+ - Check the availability of lavtory hand rail
+ - Attention to the loose lavatory hand rail
+ - provision of new if deficient
+
+>> ITEM: Gap in Panels
+ - Gap in panels to be filled with proper material as per instruction
+ - Gap in panels to be filled with proper material as per instruction
+
+>> ITEM: Lavatory Scrapper Mat
+ - Chech availabilty & condition of lavatory scrapper mat
+ - Provision of new deficent/damaged
+ - Chech availabilty & condition of lavatory scrapper mat
+ - Provision of new deficent/damaged
+
+>> ITEM: Lavatory Hopper Window Mettalic
+ - Checking of Hopper window
+ - Attention to missing/broken/defaced
+ - Cheking of Hopper window locking arrengement its rubber profile
+ - Fitment of locking arrangement if missing
+ - Fitment of Rubber Profile if missing
+ - Attention to the loose/defective/missing to be refitted/repaired/replaced
+ - Checking of Hopper window
+ - Attention to missing/broken/defaced
+ - Cheking of Hopper window locking arrengement its rubber profile
+ - Fitment of locking arrangement if missing
+ - Fitment of Rubber Profile if missing
+ - Attention to the loose/defective/missing to be refitted/repaired/replaced
+
+>> ITEM: Checking of Flushing by EPPFS
+ - Only Flushing  System working or not to be checked by flushing
+ - Only Flushing  System working or not to be checked by flushing
+
+>> ITEM: Checking availabilty of water
+ - Availabilty of water in toilets to be checked
+ - Availabilty of water in toilets to be checked
+
+>> ITEM: Wash Basin
+ - Fitment of new wash basin
+ - Fitment of new wash basin
+
+=== EXACT DB OUTPUT FOR DOOR AREA (ID: 121) ===
+
+>> ITEM: Entrance Door Latches and Stoppers
+ - Check Availabilty /working of door latches & stoppers
+ - Attention to the loose Door latches and stoppers
+ - Fitment of new door latches and stoppers
+ - Check Availabilty /working of door latches & stoppers
+ - Attention to the loose Door latches and stoppers
+ - Fitment of new door latches and stoppers
+
+>> ITEM: Entrance Door Spigot
+ - Checking the function and condition of the entrance door spigot
+ - Attention to the Spigot if found loose
+ - Fitment of new Entrance Door Spigot
+ - Checking the function and condition of the entrance door spigot
+ - Attention to the Spigot if found loose
+ - Fitment of new Entrance Door Spigot
+
+>> ITEM: Saloon Door
+ - Check condition of saloon door for hinges/spigot , glass ,Rubber profile & gate hook
+ - Attention to the Loose hinges/ spigot
+ - Saloon door rubber profile found torn , defecient to be replaced
+ - Saloon door rubber profile if loose then to be refitted
+ - Check condition of saloon door for hinges/spigot , glass ,Rubber profile & gate hook
+ - Attention to the Loose hinges/ spigot
+ - Saloon door rubber profile found torn , defecient to be replaced
+ - Saloon door rubber profile if loose then to be refitted
+
+>> ITEM: Saloon Door / IC Door
+ - Replacement of Defective/broken hinges/Spigot
+ - Replacement of Defective/broken hinges/Spigot
+ - Saloon door glass replacemet
+ - Replacement of Defective/broken hinges/Spigot
+ - Replacement of Defective/broken hinges/Spigot
+ - Saloon door glass replacemet
+
+>> ITEM: Door Closer
+ - Check the working/Fittment of door closer
+ - Adjustment of speed /Attention to the door closure
+ - Removal of defective and fitment of new door closure
+ - Check the working/Fittment of door closer
+ - Adjustment of speed /Attention to the door closure
+ - Removal of defective and fitment of new door closure
+
+>> ITEM: Rolling Shutter/ Sliding Door
+ - Check the working of  rolling shutter/sliding door
+ - Check glass, locking arrangment of coupe sliding door
+ - Attention of loose fittings such as locking arrangement, glass, rubber profile
+ - Replacement of Rolling shutter or sliding door/
+ - Fitment of new glass, locking arrangement , rubber profile etc.
+ - Check the working of  rolling shutter/sliding door
+ - Check glass, locking arrangment of coupe sliding door
+ - Attention of loose fittings such as locking arrangement, glass, rubber profile
+ - Replacement of Rolling shutter or sliding door/
+ - Fitment of new glass, locking arrangement , rubber profile etc.
+
+>> ITEM: Door Panel
+ - Check fitting of all door panels & its glasses if available
+ - Attention to the loose shabby panels by painting or screwing
+ - Fitment of new glasses
+ - Check fitting of all door panels & its glasses if available
+ - Attention to the loose shabby panels by painting or screwing
+ - Fitment of new glasses
+
+>> ITEM: Door Prubber Profile
+ - Check availabilty/condition of door rubber profile
+ - Attention to the loose rubber profiles
+ - fitment of new rubber profiles if torn
+ - Check availabilty/condition of door rubber profile
+ - Attention to the loose rubber profiles
+ - fitment of new rubber profiles if torn
+
+>> ITEM: Vestibule Sliding Door Locking Pin
+ - Check the availability/condition of the vestibule sliding door locking pin & its bracket
+ - Fitment of new locking pin and bracket if missisng
+ - Attention to the loose fittings
+ - Check the availability/condition of the vestibule sliding door locking pin & its bracket
+ - Fitment of new locking pin and bracket if missisng
+ - Attention to the loose fittings
+
+>> ITEM: Door Lock
+ - Check working of door lock if defective to be replace/repair
+ - Check working of door lock if defective to be replace/repair
+
+>> ITEM: End Wall Sliding Doors
+ - Check the working & parts of the end wall sliding doors
+ - If defective to be repair/replace parts if required
+ - check avalebilty of glass , if broken to be replaced
+ - Check the working & parts of the end wall sliding doors
+ - If defective to be repair/replace parts if required
+ - check avalebilty of glass , if broken to be replaced
+
+>> ITEM: Single Information Poster
+ - Checking of Sticker
+ - Removal of defective Sticker
+ - Fitment of new sticker
+ - Attention to the loose stickers
+ - Checking of Sticker
+ - Removal of defective Sticker
+ - Fitment of new sticker
+ - Attention to the loose stickers

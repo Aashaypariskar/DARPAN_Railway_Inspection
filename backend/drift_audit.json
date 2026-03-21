@@ -1,0 +1,24 @@
+{
+  "mismatches": [
+    {
+      "table": "amenity_subcategories",
+      "column": "requires_compartment",
+      "expected": "INTEGER",
+      "actual": "BOOLEAN"
+    },
+    {
+      "table": "cai_questions",
+      "column": "is_active",
+      "expected": "INTEGER",
+      "actual": "BOOLEAN"
+    },
+    {
+      "table": "ltr_schedules",
+      "column": "is_active",
+      "expected": "INTEGER",
+      "actual": "BOOLEAN"
+    }
+  ],
+  "missingInDB": [],
+  "missingInModel": []
+}

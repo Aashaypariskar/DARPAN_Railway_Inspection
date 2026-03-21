@@ -1,0 +1,6 @@
+[
+  {
+    "Table": "questions",
+    "Create Table": "CREATE TABLE `questions` (\n  `id` int NOT NULL AUTO_INCREMENT,\n  `text` text NOT NULL,\n  `activity_id` int DEFAULT NULL,\n  `schedule_id` int DEFAULT NULL,\n  `subcategory_id` int DEFAULT NULL,\n  `specified_value` varchar(255) DEFAULT NULL,\n  `category_id` int DEFAULT NULL,\n  `item_id` int DEFAULT NULL,\n  `answer_type` enum('BOOLEAN','VALUE') DEFAULT 'BOOLEAN',\n  `unit` varchar(50) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_questions_schedule_id` (`schedule_id`),\n  KEY `idx_questions_activity_id` (`activity_id`),\n  KEY `idx_questions_subcategory_id` (`subcategory_id`),\n  KEY `item_id` (`item_id`),\n  CONSTRAINT `questions_ibfk_110` FOREIGN KEY (`activity_id`) REFERENCES `activities` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,\n  CONSTRAINT `questions_ibfk_111` FOREIGN KEY (`schedule_id`) REFERENCES `ltr_schedules` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,\n  CONSTRAINT `questions_ibfk_112` FOREIGN KEY (`subcategory_id`) REFERENCES `amenity_subcategories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,\n  CONSTRAINT `questions_ibfk_113` FOREIGN KEY (`item_id`) REFERENCES `amenity_items` (`id`) ON DELETE SET NULL ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=5640 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+  }
+]

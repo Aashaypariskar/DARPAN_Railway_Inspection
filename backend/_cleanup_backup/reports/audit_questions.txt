@@ -1,0 +1,72 @@
+[
+  {
+    "id": 3113,
+    "amenity_item_id": 450,
+    "item_id": 450,
+    "subcategory_id": 121,
+    "text": "Check Availabilty /working of door latches & stoppers"
+  },
+  {
+    "id": 3114,
+    "amenity_item_id": 450,
+    "item_id": 450,
+    "subcategory_id": 121,
+    "text": "Attention to the loose Door latches and stoppers"
+  },
+  {
+    "id": 3115,
+    "amenity_item_id": 450,
+    "item_id": 450,
+    "subcategory_id": 121,
+    "text": "Fitment of new door latches and stoppers"
+  },
+  {
+    "id": 3116,
+    "amenity_item_id": 451,
+    "item_id": 451,
+    "subcategory_id": 121,
+    "text": "Checking the function and condition of the entrance door spigot"
+  },
+  {
+    "id": 3117,
+    "amenity_item_id": 451,
+    "item_id": 451,
+    "subcategory_id": 121,
+    "text": "Attention to the Spigot if found loose"
+  },
+  {
+    "id": 3118,
+    "amenity_item_id": 452,
+    "item_id": 452,
+    "subcategory_id": 121,
+    "text": "Check condition of saloon door for hinges/spigot , glass ,Rubber profile & gate hook"
+  },
+  {
+    "id": 3119,
+    "amenity_item_id": 461,
+    "item_id": 452,
+    "subcategory_id": 121,
+    "text": "Replacement of Defective/broken hinges/Spigot"
+  },
+  {
+    "id": 3120,
+    "amenity_item_id": 452,
+    "item_id": 452,
+    "subcategory_id": 121,
+    "text": "Attention to the Loose hinges/ spigot"
+  },
+  {
+    "id": 3121,
+    "amenity_item_id": 452,
+    "item_id": 452,
+    "subcategory_id": 121,
+    "text": "Saloon door rubber profile found torn , defecient to be replaced"
+  },
+  {
+    "id": 3122,
+    "amenity_item_id": 452,
+    "item_id": 452,
+    "subcategory_id": 121,
+    "text": "Saloon door rubber profile if loose then to be refitted"
+  }
+]

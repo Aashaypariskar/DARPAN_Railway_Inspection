@@ -1,0 +1,24 @@
+﻿[dotenv@17.3.1] injecting env (9) from .env.development -- tip: ⚙️  write to custom object with { processEnv: myObject }
+[DB INIT] Loading configuration for environment: development
+--- DEBUGGING SES-25 AMENITY PROJECTION ---
+InspectionAnswer count: 202
+Question ID 3000: FOUND
+Question ID 3001: FOUND
+Question ID 3002: FOUND
+Question ID 3003: FOUND
+Question ID 3004: FOUND
+Running projectSession(25, "AMENITY")...
+--- Projecting Session: 25 (AMENITY) ---
+[SESSION-RESOLVER] Resolving session_id:25 for module:AMENITY
+[SESSION-RESOLVER] Found in primary table (CommissionarySession) for AMENITY: 25
+[DEBUG]   -> Normalizing session...
+[DEBUG]   -> Calculating master total...
+[DEBUG]   -> Master Total: 208
+[DEBUG]   -> Validating 202 answers...
+[DEBUG]   -> Answers validated. Attempted: 202
+[DEBUG]   -> Session Finalized: true
+[DEBUG]   -> Upserting reporting_session...
+[DEBUG]   -> Upserting reporting_session...
+[DEBUG]   -> Looking up reporting_session ID...
+[DEBUG]   -> Reporting Session ID: 2220
+--- DEBUG COMPLETE ---

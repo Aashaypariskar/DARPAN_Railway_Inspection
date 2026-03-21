@@ -1,0 +1,8 @@
+{
+  "name": "premade-assignment-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:dashboard": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/build_dashboard.ps1"
+  }
+}

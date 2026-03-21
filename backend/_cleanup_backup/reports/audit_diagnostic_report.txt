@@ -1,0 +1,182 @@
+
+[SUBCATEGORIES]
+ID: 119 | Name: Exterior | CatID: 6
+ID: 120 | Name: Interior passenger area | CatID: 6
+ID: 121 | Name: Door Area | CatID: 6
+ID: 122 | Name: Passege area | CatID: 6
+ID: 123 | Name: Lavatory area | CatID: 6
+ID: 124 | Name: Seat and Berths | CatID: 6
+ID: 125 | Name: Exterior | CatID: 41
+ID: 126 | Name: Interior passenger area | CatID: 41
+ID: 127 | Name: Door Area | CatID: 41
+ID: 128 | Name: Passege area | CatID: 41
+ID: 129 | Name: Lavatory area | CatID: 41
+ID: 130 | Name: Seat and Berths | CatID: 41
+ID: 131 | Name: Exterior | CatID: 43
+ID: 132 | Name: Interior passenger area | CatID: 43
+ID: 133 | Name: Door Area | CatID: 43
+ID: 134 | Name: Passege area | CatID: 43
+ID: 135 | Name: Lavatory area | CatID: 43
+ID: 136 | Name: Seat and Berths | CatID: 43
+ID: 137 | Name: Exterior | CatID: 45
+ID: 138 | Name: Interior passenger area | CatID: 45
+ID: 139 | Name: Door Area | CatID: 45
+ID: 140 | Name: Passege area | CatID: 45
+ID: 141 | Name: Lavatory area | CatID: 45
+ID: 142 | Name: Seat and Berths | CatID: 45
+ID: 143 | Name: Exterior | CatID: 47
+ID: 144 | Name: Interior passenger area | CatID: 47
+ID: 145 | Name: Door Area | CatID: 47
+ID: 146 | Name: Passege area | CatID: 47
+ID: 147 | Name: Lavatory area | CatID: 47
+ID: 148 | Name: Seat and Berths | CatID: 47
+ID: 149 | Name: Exterior | CatID: 49
+ID: 150 | Name: Interior passenger area | CatID: 49
+ID: 151 | Name: Door Area | CatID: 49
+ID: 152 | Name: Passege area | CatID: 49
+ID: 153 | Name: Lavatory area | CatID: 49
+ID: 154 | Name: Seat and Berths | CatID: 49
+ID: 155 | Name: Exterior | CatID: 51
+ID: 156 | Name: Interior passenger area | CatID: 51
+ID: 157 | Name: Door Area | CatID: 51
+ID: 158 | Name: Passege area | CatID: 51
+ID: 159 | Name: Lavatory area | CatID: 51
+ID: 160 | Name: Seat and Berths | CatID: 51
+ID: 161 | Name: Exterior | CatID: 53
+ID: 162 | Name: Interior passenger area | CatID: 53
+ID: 163 | Name: Door Area | CatID: 53
+ID: 164 | Name: Passege area | CatID: 53
+ID: 165 | Name: Lavatory area | CatID: 53
+ID: 166 | Name: Seat and Berths | CatID: 53
+ID: 167 | Name: Exterior | CatID: 55
+ID: 168 | Name: Interior passenger area | CatID: 55
+ID: 169 | Name: Door Area | CatID: 55
+ID: 170 | Name: Passege area | CatID: 55
+ID: 171 | Name: Lavatory area | CatID: 55
+ID: 172 | Name: Seat and Berths | CatID: 55
+ID: 173 | Name: Exterior | CatID: 57
+ID: 174 | Name: Interior passenger area | CatID: 57
+ID: 175 | Name: Door Area | CatID: 57
+ID: 176 | Name: Passege area | CatID: 57
+ID: 177 | Name: Lavatory area | CatID: 57
+ID: 178 | Name: Seat and Berths | CatID: 57
+ID: 179 | Name: Exterior | CatID: 59
+ID: 185 | Name: Undergear | CatID: 6
+ID: 186 | Name: WSP Maintenance | CatID: 3
+
+[LAVATORY AUDIT - ID: 123]
+- Item ID: 486 | Name: Lavatory Flooring
+- Item ID: 487 | Name: Wall Panels & celling panel
+- Item ID: 488 | Name: Frosted Glass
+- Item ID: 489 | Name: Mirror and Mirror Fittings
+- Item ID: 490 | Name: Wash Basin Jayson Cock/Tap
+- Item ID: 491 | Name: Wash Basin Drainage
+- Item ID: 492 | Name: Flusher Valve
+- Item ID: 493 | Name: Wall Protector
+- Item ID: 494 | Name: Fish Tail
+- Item ID: 495 | Name: Water Tank and its pipeline/connections
+- Item ID: 496 | Name: Tower Bolt
+- Item ID: 497 | Name: General Pipeline & drain pipes
+- Item ID: 498 | Name: Dustbin with Garbage Bag
+- Item ID: 499 | Name: Liquid Soap Dispenser
+- Item ID: 500 | Name: Toilet Paper Roll Bracket
+- Item ID: 501 | Name: Odour Control Container
+- Item ID: 502 | Name: Health Faucet
+- Item ID: 503 | Name: Ventilation Arrangement
+- Item ID: 504 | Name: Mug & Chain
+- Item ID: 505 | Name: Lav door spring
+- Item ID: 506 | Name: Lav Door Stopper
+- Item ID: 507 | Name: Lavtory Door Pivot/Hinge
+- Item ID: 508 | Name: Acrylic/Vinyl Stickers
+- Item ID: 509 | Name: Squat Pan/Commode Fittings
+- Item ID: 510 | Name: Lavtory Hand Rail
+- Item ID: 511 | Name: Gap in Panels
+- Item ID: 512 | Name: Lavatory Scrapper Mat
+- Item ID: 513 | Name: Lavatory Hopper Window Mettalic
+- Item ID: 514 | Name: Checking of Flushing by EPPFS
+- Item ID: 515 | Name: Checking availabilty of water
+- Item ID: 516 | Name: Lavatory Flooring
+- Item ID: 517 | Name: Wall Panels & celling panel
+- Item ID: 518 | Name: Wash Basin
+- Item ID: 519 | Name: Flusher Valve
+- Item ID: 520 | Name: Water Tank and its pipeline/connections
+- Item ID: 521 | Name: General Pipeline & drain pipes
+- Item ID: 522 | Name: Lavatory Scrapper Mat
+- Item ID: 1696 | Name: Lavatory Flooring
+- Item ID: 1697 | Name: Wall Panels & celling panel
+- Item ID: 1698 | Name: Frosted Glass
+- Item ID: 1699 | Name: Mirror and Mirror Fittings
+- Item ID: 1700 | Name: Wash Basin Jayson Cock/Tap
+- Item ID: 1701 | Name: Wash Basin Drainage
+- Item ID: 1702 | Name: Flusher Valve
+- Item ID: 1703 | Name: Wall Protector
+- Item ID: 1704 | Name: Fish Tail
+- Item ID: 1705 | Name: Water Tank and its pipeline/connections
+- Item ID: 1706 | Name: Tower Bolt
+- Item ID: 1707 | Name: General Pipeline & drain pipes
+- Item ID: 1708 | Name: Dustbin with Garbage Bag
+- Item ID: 1709 | Name: Liquid Soap Dispenser
+- Item ID: 1710 | Name: Toilet Paper Roll Bracket
+- Item ID: 1711 | Name: Odour Control Container
+- Item ID: 1712 | Name: Health Faucet
+- Item ID: 1713 | Name: Ventilation Arrangement
+- Item ID: 1714 | Name: Mug & Chain
+- Item ID: 1715 | Name: Lav door spring
+- Item ID: 1716 | Name: Lav Door Stopper
+- Item ID: 1717 | Name: Lavtory Door Pivot/Hinge
+- Item ID: 1718 | Name: Acrylic/Vinyl Stickers
+- Item ID: 1719 | Name: Squat Pan/Commode Fittings
+- Item ID: 1720 | Name: Lavtory Hand Rail
+- Item ID: 1721 | Name: Gap in Panels
+- Item ID: 1722 | Name: Lavatory Scrapper Mat
+- Item ID: 1723 | Name: Lavatory Hopper Window Mettalic
+- Item ID: 1724 | Name: Checking of Flushing by EPPFS
+- Item ID: 1725 | Name: Checking availabilty of water
+- Item ID: 1726 | Name: Lavatory Flooring
+- Item ID: 1727 | Name: Wall Panels & celling panel
+- Item ID: 1728 | Name: Wash Basin
+- Item ID: 1729 | Name: Flusher Valve
+- Item ID: 1730 | Name: Water Tank and its pipeline/connections
+- Item ID: 1731 | Name: General Pipeline & drain pipes
+- Item ID: 1732 | Name: Lavatory Scrapper Mat
+
+[DOOR AUDIT - ID: 121]
+- Item ID: 450 | Name: Entrance Door Latches and Stoppers
+- Item ID: 451 | Name: Entrance Door Spigot
+- Item ID: 452 | Name: Saloon Door
+- Item ID: 453 | Name: Door Closer
+- Item ID: 454 | Name: Rolling Shutter/ Sliding Door
+- Item ID: 455 | Name: Door Panel
+- Item ID: 456 | Name: Door Prubber Profile
+- Item ID: 457 | Name: Vestibule Sliding Door Locking Pin
+- Item ID: 458 | Name: Door Lock
+- Item ID: 459 | Name: End Wall Sliding Doors
+- Item ID: 460 | Name: Single Information Poster
+- Item ID: 461 | Name: Saloon Door / IC Door
+- Item ID: 462 | Name: Door Closer
+- Item ID: 463 | Name: Rolling Shutter/ Sliding Door
+- Item ID: 464 | Name: Door Panel
+- Item ID: 465 | Name: End Wall Sliding Doors
+- Item ID: 466 | Name: Entrance Door Spigot
+- Item ID: 1660 | Name: Entrance Door Latches and Stoppers
+- Item ID: 1661 | Name: Entrance Door Spigot
+- Item ID: 1662 | Name: Saloon Door
+- Item ID: 1663 | Name: Door Closer
+- Item ID: 1664 | Name: Rolling Shutter/ Sliding Door
+- Item ID: 1665 | Name: Door Panel
+- Item ID: 1666 | Name: Door Prubber Profile
+- Item ID: 1667 | Name: Vestibule Sliding Door Locking Pin
+- Item ID: 1668 | Name: Door Lock
+- Item ID: 1669 | Name: End Wall Sliding Doors
+- Item ID: 1670 | Name: Single Information Poster
+- Item ID: 1671 | Name: Saloon Door / IC Door
+- Item ID: 1672 | Name: Door Closer
+- Item ID: 1673 | Name: Rolling Shutter/ Sliding Door
+- Item ID: 1674 | Name: Door Panel
+- Item ID: 1675 | Name: End Wall Sliding Doors
+- Item ID: 1676 | Name: Entrance Door Spigot
+
+[ORPHANS] AmenityItems with no subcategory_id: 0
+[ORPHANS] Questions with no parent item: 905
+
+--- DIAGNOSTIC AUDIT COMPLETE ---

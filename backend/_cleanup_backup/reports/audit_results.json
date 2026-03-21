@@ -1,0 +1,358 @@
+{
+  "orphanAmenityItems": [],
+  "orphanQuestions": [],
+  "wspSchedules": [
+    {
+      "id": 1,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 2,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 3,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 4,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 5,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 6,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 7,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 8,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 9,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 10,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 11,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 12,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 13,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 14,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 15,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 16,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 17,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 18,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 19,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 20,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 21,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 22,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 23,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 24,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 25,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 26,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 27,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 28,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 29,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 30,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 31,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 32,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 33,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 34,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 35,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 36,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 37,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 38,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 39,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 40,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 41,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 42,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 43,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 44,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 45,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 46,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 47,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 48,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 49,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 50,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 51,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 52,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 53,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 54,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 55,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 56,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 57,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 58,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 59,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 60,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 61,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 62,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 63,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    },
+    {
+      "id": 64,
+      "name": "01 Schedule",
+      "itemCount": 5
+    },
+    {
+      "id": 65,
+      "name": "02 Schedule",
+      "itemCount": 4
+    },
+    {
+      "id": 66,
+      "name": "03 Schedule",
+      "itemCount": 2
+    },
+    {
+      "id": 67,
+      "name": "Shop Schedule-I",
+      "itemCount": 7
+    },
+    {
+      "id": 68,
+      "name": "Shop Schedule-II",
+      "itemCount": 7
+    },
+    {
+      "id": 69,
+      "name": "Shop Schedule-III",
+      "itemCount": 7
+    },
+    {
+      "id": 70,
+      "name": "Wheel Shelling / Repeated Failures",
+      "itemCount": 5
+    }
+  ],
+  "undergearIssues": [],
+  "lavatoryDoorIsolation": true
+}

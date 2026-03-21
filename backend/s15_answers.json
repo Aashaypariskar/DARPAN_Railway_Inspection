@@ -1,0 +1,72 @@
+[
+  {
+    "id": 41,
+    "photo_url": null,
+    "status": "OK",
+    "question_id": 10459,
+    "question_text_snapshot": "Check the automatic mechanism of door for smooth functioning."
+  },
+  {
+    "id": 42,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/a6ff987e-2548-4885-89f1-7274456b0bf0.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10460,
+    "question_text_snapshot": "Check all the elements of door mechanism for good condition and working like Shaft, pneumatic cylinder, LM bearings, elastic rope toothed belt, mountings and brackets"
+  },
+  {
+    "id": 43,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/36239676-5c35-41ca-8f51-298aa9a2216d.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10461,
+    "question_text_snapshot": "Dismantle the mechanism if not working smoothly and replace or repair the defective element."
+  },
+  {
+    "id": 44,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/0bd9dfcd-8e03-458b-9318-37136995662d.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10462,
+    "question_text_snapshot": "Reassemble the mechanism and check for proper working."
+  },
+  {
+    "id": 45,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/1cd98dcc-9aba-4ea9-8057-70c58806886d.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10463,
+    "question_text_snapshot": "Check the door flaps for bent, broken or externally damage and repair or replace the defective door flap."
+  },
+  {
+    "id": 46,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/4c22a0e3-92b4-414d-9a54-750e38c945d9.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10464,
+    "question_text_snapshot": "Check the door flap element like inner & outer locking handle, locking pin, glass and glass frame, male & female hand safe gasket, moldings, mountings, rivets etc. for bent, broken or externally damage and repair or replace the defective element of door flap."
+  },
+  {
+    "id": 47,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/4a52de3d-f277-4b91-9c91-1dbd23bb232b.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10465,
+    "question_text_snapshot": "Check the guide rail for bent, corroded & damage. Repair or replace if required."
+  },
+  {
+    "id": 48,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/9cfef1d2-b0e8-47f7-8a69-80b03f2543d9.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10466,
+    "question_text_snapshot": "Check the Key locking arrangement for good condition and working."
+  },
+  {
+    "id": 49,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/1c65f749-4e01-474c-87fa-95fe63f3849d.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10467,
+    "question_text_snapshot": "Provide suitable lubricate on guide shaft for smooth working."
+  },
+  {
+    "id": 50,
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/7497a584-6684-4ad5-86e0-927d12168a6b.jpeg",
+    "status": "DEFICIENCY",
+    "question_id": 10468,
+    "question_text_snapshot": "Check the automatic mechanism of door for smooth functioning."
+  }
+]

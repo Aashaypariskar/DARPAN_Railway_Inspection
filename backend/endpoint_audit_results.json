@@ -1,0 +1,38 @@
+[
+  {
+    "path": "/health",
+    "method": "GET",
+    "status": 200,
+    "passed": true
+  },
+  {
+    "path": "/api/health",
+    "method": "GET",
+    "status": 404,
+    "passed": false
+  },
+  {
+    "path": "/api/common/trains",
+    "method": "GET",
+    "status": 404,
+    "passed": false
+  },
+  {
+    "path": "/api/monitoring/stats",
+    "method": "GET",
+    "status": 404,
+    "passed": false
+  },
+  {
+    "path": "/api/reports/summary",
+    "method": "GET",
+    "status": 401,
+    "passed": true
+  },
+  {
+    "path": "/api/non-existent-endpoint",
+    "method": "GET",
+    "status": 404,
+    "passed": true
+  }
+]

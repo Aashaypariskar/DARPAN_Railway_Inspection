@@ -1,0 +1,97 @@
+--- STARTING DIAG ---
+--- DB ROWS ---
+[
+  {
+    "id": 50,
+    "session_id": 15,
+    "status": "DEFICIENCY",
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/7497a584-6684-4ad5-86e0-927d12168a6b.jpeg",
+    "createdAt": "2026-03-06T13:11:28.000Z"
+  },
+  {
+    "id": 51,
+    "session_id": 16,
+    "status": "DEFICIENCY",
+    "photo_url": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/ab66954c-7475-4649-8a2d-f08b514dc4ec.jpeg",
+    "createdAt": "2026-03-07T04:56:35.000Z"
+  },
+  {
+    "id": 52,
+    "session_id": 16,
+    "status": "DEFICIENCY",
+    "photo_url": null,
+    "createdAt": "2026-03-07T06:10:10.000Z"
+  }
+]
+--- RECENT 20 FILES ---
+[
+  {
+    "name": "photo-1772710989000-80802275.jpeg",
+    "mtime": "2026-03-05T11:43:09.048Z",
+    "mtimeMs": 1772710989048.2239
+  },
+  {
+    "name": "photo-1772701279629-595914945.jpeg",
+    "mtime": "2026-03-05T09:01:19.725Z",
+    "mtimeMs": 1772701279725.116
+  },
+  {
+    "name": "photo-1772012465840-376382016.jpeg",
+    "mtime": "2026-02-25T09:41:05.869Z",
+    "mtimeMs": 1772012465868.7441
+  },
+  {
+    "name": "photo-1772009689543-847481352.jpeg",
+    "mtime": "2026-02-25T08:54:49.563Z",
+    "mtimeMs": 1772009689563.3694
+  },
+  {
+    "name": "photo-1771935255873-500314435.jpeg",
+    "mtime": "2026-02-24T12:14:15.901Z",
+    "mtimeMs": 1771935255900.8984
+  },
+  {
+    "name": "photo-1771933554575-677727034.jpeg",
+    "mtime": "2026-02-24T11:45:54.593Z",
+    "mtimeMs": 1771933554593.2368
+  },
+  {
+    "name": "photo-1771906695413-600619218.jpeg",
+    "mtime": "2026-02-24T04:18:15.432Z",
+    "mtimeMs": 1771906695432.233
+  },
+  {
+    "name": "photo-1771838133596-659008957.jpeg",
+    "mtime": "2026-02-23T09:15:33.627Z",
+    "mtimeMs": 1771838133626.6052
+  },
+  {
+    "name": "photo-1771838112824-180861317.jpeg",
+    "mtime": "2026-02-23T09:15:12.843Z",
+    "mtimeMs": 1771838112842.9849
+  },
+  {
+    "name": "photo-1771663047273-534640229.jpeg",
+    "mtime": "2026-02-21T08:37:27.290Z",
+    "mtimeMs": 1771663047289.6914
+  },
+  {
+    "name": "photo-1771663008118-57747126.jpeg",
+    "mtime": "2026-02-21T08:36:48.136Z",
+    "mtimeMs": 1771663008135.9006
+  },
+  {
+    "name": "photo-1771657335375-874996149.jpeg",
+    "mtime": "2026-02-21T07:02:15.417Z",
+    "mtimeMs": 1771657335416.6033
+  },
+  {
+    "name": "photo-1771656497086-443578806.jpeg",
+    "mtime": "2026-02-21T06:48:17.098Z",
+    "mtimeMs": 1771656497098.3655
+  }
+]
+--- SALVAGE TEST ---
+DEF-50 (Created: Fri Mar 06 2026 18:41:28 GMT+0530 (India Standard Time)) -> Result: uploads/photo-1772710989000-80802275.jpeg
+DEF-51 (Created: Sat Mar 07 2026 10:26:35 GMT+0530 (India Standard Time)) -> Result: uploads/photo-1772710989000-80802275.jpeg
+DEF-52 (Created: Sat Mar 07 2026 11:40:10 GMT+0530 (India Standard Time)) -> Result: uploads/photo-1772710989000-80802275.jpeg

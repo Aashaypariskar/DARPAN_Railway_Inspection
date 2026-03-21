@@ -1,0 +1,18 @@
+CREATE TABLE `reporting_answers` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reporting_session_id` int NOT NULL,
+  `source_question_id` int DEFAULT NULL,
+  `question_text` text,
+  `section_title` varchar(255) DEFAULT NULL,
+  `answer_status` varchar(50) DEFAULT NULL,
+  `reasons_json` json DEFAULT NULL,
+  `remark` text,
+  `before_photo_url` text,
+  `after_photo_url` text,
+  `resolved` tinyint DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_reporting_answers_session` (`reporting_session_id`),
+  KEY `idx_reporting_answers_status` (`answer_status`),
+  KEY `idx_reporting_answers_resolved` (`resolved`),
+  CONSTRAINT `reporting_answers_ibfk_1` FOREIGN KEY (`reporting_session_id`) REFERENCES `reporting_sessions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=922 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

@@ -1,0 +1,11 @@
+--- LTR SCHEDULE COUNTS PER COACH ---
+Coach 12301-B1 (ID: 1) -> Schedules: 11
+Coach 12301-B2 (ID: 2) -> Schedules: 11
+Coach 12002-B1 (ID: 3) -> Schedules: 11
+Coach 12002-B2 (ID: 4) -> Schedules: 11
+Coach 12213-B1 (ID: 5) -> Schedules: 11
+Coach 12213-B2 (ID: 6) -> Schedules: 11
+Coach 12909-B1 (ID: 7) -> Schedules: 11
+Coach 12909-B2 (ID: 8) -> Schedules: 11
+Coach 22436-B1 (ID: 9) -> Schedules: 11
+Coach 22436-B2 (ID: 10) -> Schedules: 11

@@ -1,0 +1,48 @@
+--- ANALYZING EXCEL STRUCTURE FOR ACTIVITY TYPES ---
+
+--- SHEET: "Exterior" ---
+Row 0: []
+Row 1: ["Workstation: Exterior of Coach"]
+Row 2: []
+Row 3: ["Sr.No.","Description of the Item","Minor Activities to be carried out"]
+Row 4: [1,"Destination and Roof Boards","Checking of boards for torn vinyl"]
+!!! FOUND 'MAJOR' in Row 24: ["Sr.No.","Description of the Item","Major Activities to be carried out"]
+
+--- SHEET: "Interior passenger area" ---
+Row 0: []
+Row 1: ["Workstation: Interior Passenger Area "]
+Row 2: []
+Row 3: ["Sr.No.","Description of the Item","Minor activities to be carried out"]
+Row 4: [1,"Luggage Racks","Checking of Luggage racks if they are properly fixed or not"]
+!!! FOUND 'MAJOR' in Row 87: ["Sr.No.","Description of the Item","Major activities to be carried out"]
+
+--- SHEET: "Door Area" ---
+Row 0: []
+Row 1: ["Workstation: All Doors Area "]
+Row 2: ["Sr.No.","Description of the Item","Minor activities to be carried Out"]
+Row 3: [1,"Entrance Door Latches and Stoppers","Check Availabilty /working of door latches & stoppers"]
+Row 4: [null,null,"Attention to the loose Door latches and stoppers "]
+!!! FOUND 'MAJOR' in Row 35: ["Sr.No.","Description of the Item","Major activities to be carried Out"]
+
+--- SHEET: "Passege area" ---
+Row 0: []
+Row 1: [null,"Workstation: Passage Area Outside the Lavatory"]
+Row 2: [null,"Sr.No.","Description of the Item","Minor activities to be carried Out"]
+Row 3: [null,1,"Outer Wash Basin and\r\nFittings","Check fitment of outer wash basin, drain pipe & its ancillary. "]
+Row 4: [null,null,null,"Attention to the loose fittings"]
+!!! FOUND 'MAJOR' in Row 46: [null,"Sr.No.","Description of the Item","Major activities to be carried Out"]
+
+--- SHEET: "Lavatory area" ---
+Row 0: []
+Row 1: ["Workstation: Lavatory Area"]
+Row 2: []
+Row 3: ["Sr.No.","Description of the Item","Minor activities to be carried out"]
+Row 4: [1,"Lavatory Flooring","Check the condition of the lavatory flooring and floor drain\r\n"]
+!!! FOUND 'MAJOR' in Row 99: ["Sr.No.","Description of the Item","Major activities to be carried out"]
+
+--- SHEET: "Seat and Berths" ---
+Row 0: []
+Row 1: ["Workstation: Seats and Berths"]
+Row 2: []
+Row 3: ["Sr.No.","Description of the Item","Minor activities to be carried Out"]
+Row 4: [1,"Seat/Berth Condition","Check the condition & Fittment of seat/berth/backrest &\r\n safety railling\r\n"]

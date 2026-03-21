@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            color: #000;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .report-header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .metadata-table, .summary-table, .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+        }
+
+        .metadata-table td, .summary-table th, .summary-table td, .audit-table th, .audit-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        .metadata-table td {
+            width: 50%;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .summary-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .summary-table td {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .section-title {
+            background-color: #eee;
+            padding: 6px 10px;
+            font-weight: bold;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        .audit-table th {
+            background-color: #f2f2f2;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        /* Column widths for audit table */
+        .col-sn { width: 5%; }
+        .col-q { width: 40%; }
+        .col-s { width: 12%; }
+        .col-reasons { width: 18%; }
+        .col-remarks { width: 25%; }
+
+        .status-ok { color: green; font-weight: bold; }
+        .status-deficiency { color: red; font-weight: bold; }
+
+        .reasons-list {
+            margin: 0;
+            padding-left: 15px;
+            font-size: 12px;
+        }
+
+        .remark-text {
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .image-wrapper {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .image-item {
+            text-align: center;
+            width: 45%;
+        }
+
+        .image-item img {
+            max-height: 120px;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+            margin: 6px auto;
+            border: 1px solid #ddd;
+        }
+
+        .image-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #888;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #666;
+            text-align: right;
+            border-top: 1px solid #ccc;
+            padding-top: 5px;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(255, 0, 0, 0.15);
+            font-weight: bold;
+            z-index: -1000;
+            user-select: none;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    {{#unless summary.isFinalized}}
+    <div class="watermark">DRAFT - NOT FINALIZED</div>
+    {{/unless}}
+
+    <div class="report-header">
+        <h1>INSPECTION SESSION REPORT</h1>
+        {{#unless summary.isFinalized}}
+        <h2 style="color: red; margin-top: 5px;">[ {{summary.status}} - NOT FINALIZED ]</h2>
+        {{/unless}}
+    </div>
+
+    <table class="metadata-table">
+        <tr>
+            <td><span class="label">Inspector:</span> {{sessionInfo.inspector}}</td>
+            <td><span class="label">Date:</span> {{sessionInfo.inspectionDate}}</td>
+        </tr>
+        <tr>
+            <td><span class="label">Asset / Coach:</span> {{sessionInfo.assetOrCoach}}</td>
+            <td><span class="label">Status:</span> {{sessionInfo.status}}</td>
+        </tr>
+    </table>
+
+    <table class="summary-table">
+        <thead>
+            <tr>
+                <th>Total Questions</th>
+                {{#if summary.isFinalized}}
+                <th>Passed (OK)</th>
+                <th>Deficiencies</th>
+                {{else}}
+                <th>Attempted</th>
+                <th>Passed (OK)</th>
+                <th>Progress %</th>
+                {{/if}}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{summary.totalQuestions}}</td>
+                {{#if summary.isFinalized}}
+                <td>{{summary.okCount}}</td>
+                <td style="color: red;">{{summary.deficiencyCount}}</td>
+                {{else}}
+                <td>{{summary.attemptedCount}}</td>
+                <td>{{summary.okCount}}</td>
+                <td style="color: #d97706;">{{summary.progressPercentage}}%</td>
+                {{/if}}
+            </tr>
+        </tbody>
+    </table>
+    {{#unless summary.isFinalized}}
+    <div style="text-align: center; color: red; font-size: 11px; margin-bottom: 15px;">
+        {{summary.message}}
+    </div>
+    {{/unless}}
+
+    {{#each sections}}
+    <div class="section-title">{{this.title}}</div>
+    <table class="audit-table">
+        <thead>
+            <tr>
+                <th class="col-sn">Serial No</th>
+                <th class="col-q">Question Text</th>
+                <th class="col-s">Status</th>
+                <th class="col-reasons">Reasons</th>
+                <th class="col-remarks">Remark</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each this.questions}}
+            <tr>
+                <td style="text-align: center;">{{add @index 1}}</td>
+                <td>{{this.questionText}}</td>
+                <td class="{{#if (eq this.status 'DEFICIENCY')}}status-deficiency{{else}}{{#if (eq this.status 'OK')}}status-ok{{else}}{{/if}}{{/if}}">
+                    {{this.status}}
+                </td>
+                <td>
+                    {{#if this.reasons.length}}
+                    <ul class="reasons-list">
+                        {{#each this.reasons}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                    {{else}}
+                    -
+                    {{/if}}
+                </td>
+                <td class="remark-text">
+                    {{#if this.remark}}
+                    {{this.remark}}
+                    {{else}}
+                    -
+                    {{/if}}
+                </td>
+            </tr>
+            {{#if (or this.beforeImage this.afterImage)}}
+            <tr>
+                <td colspan="5">
+                    <div class="image-wrapper">
+                        {{#if this.beforeImage}}
+                        <div class="image-item">
+                            <img src="{{this.beforeImage}}" alt="Before Photo">
+                            <div class="image-label">BEFORE PHOTO</div>
+                        </div>
+                        {{/if}}
+                        {{#if this.afterImage}}
+                        <div class="image-item">
+                            <img src="{{this.afterImage}}" alt="After Photo">
+                            <div class="image-label">AFTER PHOTO</div>
+                        </div>
+                        {{/if}}
+                    </div>
+                </td>
+            </tr>
+            {{/if}}
+            {{/each}}
+        </tbody>
+    </table>
+    {{/each}}
+
+    <div class="footer">
+        Generated by Compliance Audit System | {{generatedAt}}
+    </div>
+
+</body>
+</html>

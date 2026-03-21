@@ -1,0 +1,88 @@
+{
+  "caiReporting": [
+    {
+      "source_session_id": 4,
+      "module_type": "CAI",
+      "inspection_datetime": "2026-02-28T10:03:47.000Z",
+      "status": "DRAFT"
+    },
+    {
+      "source_session_id": 3,
+      "module_type": "CAI",
+      "inspection_datetime": "2026-02-27T18:35:32.000Z",
+      "status": "DRAFT"
+    },
+    {
+      "source_session_id": 2,
+      "module_type": "CAI",
+      "inspection_datetime": "2026-02-25T14:06:07.000Z",
+      "status": "DRAFT"
+    },
+    {
+      "source_session_id": 1,
+      "module_type": "CAI",
+      "inspection_datetime": "2026-02-25T12:43:16.000Z",
+      "status": "DRAFT"
+    }
+  ],
+  "recentAnswers": [
+    {
+      "session_id": 14,
+      "module": "COMMISSIONARY",
+      "count": 22
+    },
+    {
+      "session_id": 13,
+      "module": "SICKLINE",
+      "count": 1
+    },
+    {
+      "session_id": 12,
+      "module": "COMMISSIONARY",
+      "count": 3
+    },
+    {
+      "session_id": 11,
+      "module": "COMMISSIONARY",
+      "count": 3
+    },
+    {
+      "session_id": 10,
+      "module": "SICKLINE",
+      "count": 2
+    },
+    {
+      "session_id": 9,
+      "module": "SICKLINE",
+      "count": 2
+    },
+    {
+      "session_id": 9,
+      "module": "COMMISSIONARY",
+      "count": 1
+    },
+    {
+      "session_id": 8,
+      "module": "SICKLINE",
+      "count": 2
+    },
+    {
+      "session_id": 8,
+      "module": "COMMISSIONARY",
+      "count": 5
+    },
+    {
+      "session_id": 7,
+      "module": "SICKLINE",
+      "count": 1
+    }
+  ],
+  "missingCai": [],
+  "missingSickline": [
+    {
+      "id": 14,
+      "status": "IN_PROGRESS",
+      "createdAt": "2026-03-05T07:03:51.000Z"
+    }
+  ]
+}

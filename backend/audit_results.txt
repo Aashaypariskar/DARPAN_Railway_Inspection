@@ -1,0 +1,19 @@
+--- FINAL DATABASE AUDIT ---
+
+MODULE | OPERATIONAL COUNT | REPORTING COUNT
+-------|-------------------|-----------------
+PITLINE      | 4                 | 4
+SICKLINE     | 14                | 13
+WSP          | 10                | 10
+CAI          | 4                 | 4
+COMMISSIONARY | 15                | 15
+
+--- MODULE & STATUS BREAKDOWN IN reporting_sessions ---
+COMMISSIONARY [DRAFT]: 14
+COMMISSIONARY [COMPLETED]: 1
+SICKLINE [IN_PROGRESS]: 12
+SICKLINE [SUBMITTED]: 1
+CAI [DRAFT]: 4
+WSP [DRAFT]: 10
+PITLINE [IN_PROGRESS]: 4
+--- DATABASE AUDIT END ---

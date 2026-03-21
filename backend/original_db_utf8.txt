@@ -1,0 +1,29 @@
+﻿const { Sequelize } = require('sequelize');
+
+// Use environment variables for credentials; fallback to embedded defaults
+const DB_NAME = process.env.DB_NAME || 'inspection_db';
+const DB_USER = process.env.DB_USER || 'railway_user';
+const DB_PASS = process.env.DB_PASS || 'Railway@123';
+const DB_HOST = process.env.DB_HOST || '3.110.16.111';
+const DB_PORT = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3307;
+const DB_DIALECT = process.env.DB_DIALECT || 'mysql';
+
+let sequelize;
+
+// Optional: allow using a local SQLite DB for development to avoid remote network issues
+if (process.env.USE_SQLITE === 'true') {
+    sequelize = new Sequelize({
+        dialect: 'sqlite',
+        storage: process.env.SQLITE_STORAGE || 'database.sqlite',
+        logging: false
+    });
+} else {
+    sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
+        host: DB_HOST,
+        dialect: DB_DIALECT,
+        logging: false,
+        port: DB_PORT
+    });
+}
+
+module.exports = sequelize;

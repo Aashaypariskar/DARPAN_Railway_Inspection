@@ -1,0 +1,90 @@
+{
+  "latestAnswers": [
+    {
+      "id": 29,
+      "session_id": 4,
+      "createdAt": "2026-03-05T09:01:14.000Z",
+      "updatedAt": "2026-03-05T09:01:19.000Z"
+    },
+    {
+      "id": 28,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:21:22.000Z",
+      "updatedAt": "2026-03-05T07:21:22.000Z"
+    },
+    {
+      "id": 27,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:22.000Z",
+      "updatedAt": "2026-03-05T07:05:22.000Z"
+    },
+    {
+      "id": 26,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:12.000Z",
+      "updatedAt": "2026-03-05T07:34:44.000Z"
+    },
+    {
+      "id": 25,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:11.000Z",
+      "updatedAt": "2026-03-05T08:56:25.000Z"
+    },
+    {
+      "id": 24,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:10.000Z",
+      "updatedAt": "2026-03-05T07:05:10.000Z"
+    },
+    {
+      "id": 23,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:08.000Z",
+      "updatedAt": "2026-03-05T07:05:08.000Z"
+    },
+    {
+      "id": 22,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:06.000Z",
+      "updatedAt": "2026-03-05T07:05:06.000Z"
+    },
+    {
+      "id": 21,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:04.000Z",
+      "updatedAt": "2026-03-05T07:05:04.000Z"
+    },
+    {
+      "id": 20,
+      "session_id": 4,
+      "createdAt": "2026-03-05T07:05:02.000Z",
+      "updatedAt": "2026-03-05T07:05:02.000Z"
+    }
+  ],
+  "latestSessions": [
+    {
+      "id": 4,
+      "status": "DRAFT",
+      "createdAt": "2026-02-28T04:33:47.000Z",
+      "updatedAt": "2026-02-28T04:33:47.000Z"
+    },
+    {
+      "id": 3,
+      "status": "DRAFT",
+      "createdAt": "2026-02-27T13:05:32.000Z",
+      "updatedAt": "2026-02-27T13:05:32.000Z"
+    },
+    {
+      "id": 2,
+      "status": "DRAFT",
+      "createdAt": "2026-02-25T08:36:07.000Z",
+      "updatedAt": "2026-02-25T08:36:07.000Z"
+    },
+    {
+      "id": 1,
+      "status": "DRAFT",
+      "createdAt": "2026-02-25T07:13:16.000Z",
+      "updatedAt": "2026-02-25T07:13:16.000Z"
+    }
+  ]
+}

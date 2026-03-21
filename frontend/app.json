@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "DARPAN",
+    "slug": "darpan-app",
+    "owner": "aashaypariskar16",
+    "version": "1.0.0",
+    "icon": "./assets/DARPAN_Logo.png",
+    "android": {
+      "package": "in.co.premade.darpan",
+      "versionCode": 4,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/DARPAN_Logo.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "expo-asset"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "73b05dbd-8665-4bb5-8765-d95c61adbbbf"
+      }
+    }
+  }
+}
