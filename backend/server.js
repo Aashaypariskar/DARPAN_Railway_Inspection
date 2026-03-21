@@ -13,7 +13,7 @@ const fs = require('fs');
 const inspectionController = require('./controllers/InspectionController');
 
 const app = express();
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8080;
 
 // Dynamic Base Path Handling (e.g., '/inspection' or '')
 const BASE_PATH = process.env.BASE_PATH || '';

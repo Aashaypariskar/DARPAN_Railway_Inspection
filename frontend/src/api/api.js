@@ -39,7 +39,8 @@ api.interceptors.response.use(
         const originalRequest = error.config;
 
         // Fallback Logic for Network Errors or Server Errors (500+)
-        const fallbackUrls = IS_DEV ? [BASE_URL, ...PROD_URLS] : PROD_URLS;
+        // In development we do not switch to production URL; we stay local and fail fast.
+        const fallbackUrls = IS_DEV ? [BASE_URL] : PROD_URLS;
 
         if ((!error.response || error.response.status >= 500) && fallbackUrls?.length > 1) {
             if (!originalRequest._retryCount) {

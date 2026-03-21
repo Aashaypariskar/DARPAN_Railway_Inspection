@@ -153,7 +153,8 @@ exports.getOrCreateSession = async (req, res) => {
             return res.status(400).json({ error: 'Invalid coach module for this session type' });
         }
 
-        const moduleType = req.query.module_type === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
+        const rawModuleType = String(req.query.module_type || '').trim().toUpperCase();
+        const moduleType = rawModuleType === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
         const today = new Date().toISOString().split('T')[0];
 
         let session = await CommissionarySession.findOne({
@@ -261,7 +262,8 @@ exports.getQuestions = async (req, res) => {
 exports.getAnswers = async (req, res) => {
     try {
         const { session_id, compartment_id, subcategory_id, activity_type } = req.query;
-        const moduleType = req.query.module_type === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
+        const rawModuleType = String(req.query.module_type || '').trim().toUpperCase();
+        const moduleType = rawModuleType === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
         console.log('[ANSWERS API]', { session_id, moduleType });
 
         const session = await SessionResolutionService.resolveSession(session_id, moduleType);
@@ -307,7 +309,8 @@ exports.saveAnswers = async (req, res) => {
             module_type
         } = req.body;
 
-        const moduleType = module_type === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
+        const rawModuleType = String(module_type || '').trim().toUpperCase();
+        const moduleType = rawModuleType === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
 
         if (!session_id || !question_id) {
             console.warn('[DEBUG] saveAnswers - Missing fields:', { session_id, question_id });
@@ -442,7 +445,8 @@ exports.getProgress = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Valid Coach number is required' });
         }
 
-        const moduleType = req.query.module_type === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
+        const rawModuleType = String(req.query.module_type || '').trim().toUpperCase();
+        const moduleType = rawModuleType === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
 
         let coach = await Coach.findOne({ where: { coach_number } });
         if (!coach) {

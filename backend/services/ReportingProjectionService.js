@@ -263,6 +263,35 @@ class ReportingProjectionService {
         
         switch (moduleType) {
             case 'AMENITY':
+                if (actualSessionType === 'PitLineSession') {
+                   await sessionData.reload({ include: [includeUser, { model: PitLineCoach }, { model: PitLineTrain }] });
+                }
+                // Dual-Retrieval strategy: fetch from both tables and de-duplicate by question_id
+                const inspectionAnswers = await InspectionAnswer.findAll({ 
+                    where: { session_id: sessionId, module_type: 'AMENITY' },
+                    include: [includeQuestion],
+                    order: [['question_id', 'ASC']]
+                });
+                const commissionaryAnswers = await CommissionaryAnswer.findAll({ 
+                    where: { session_id: sessionId, module_type: 'AMENITY' },
+                    include: [includeQuestion],
+                    order: [['question_id', 'ASC']]
+                });
+
+                const mergedMap = new Map();
+                const pushAnswer = ans => {
+                    const qid = ans.question_id || ans.id;
+                    if (!qid) return;
+                    if (!mergedMap.has(qid)) {
+                        mergedMap.set(qid, ans);
+                    }
+                };
+
+                inspectionAnswers.forEach(pushAnswer);
+                commissionaryAnswers.forEach(pushAnswer);
+
+                answers = Array.from(mergedMap.values()).sort((a, b) => (a.question_id || 0) - (b.question_id || 0));
+                break;
             case 'PITLINE':
                 // Re-fetch with includes if needed, or already resolved above but might need specific associations
                 if (actualSessionType === 'PitLineSession') {
