@@ -152,7 +152,7 @@ export const getSubcategoryMetadata = (subId) =>
     api.get('/common/subcategory-metadata', { params: { subcategory_id: subId } }).then(res => res.data);
 
 // --- COMMISSIONARY ENDPOINTS ---
-export const getCommissionarySession = (coach_number, module_type = 'COMMISSIONARY') => 
+export const getCommissionarySession = (coach_number, module_type = 'COMMISSIONARY') =>
     api.get(`/commissionary/session?coach_number=${coach_number}&module_type=${module_type}`).then(res => res.data);
 export const getCommissionaryCoaches = () => api.get('/commissionary/coaches').then(res => res.data);
 export const createCommissionaryCoach = (data) => api.post('/commissionary/coaches', data).then(res => res.data);
@@ -191,7 +191,7 @@ export const saveCommissionaryAnswers = async (data) => {
 export const getCommissionaryProgress = (coachNumber, module_type = 'COMMISSIONARY') =>
     api.get('/commissionary/progress', { params: { coach_number: coachNumber, module_type } }).then(r => r.data);
 
-export const completeCommissionarySession = (coach_number, module_type = 'COMMISSIONARY') => 
+export const completeCommissionarySession = (coach_number, module_type = 'COMMISSIONARY') =>
     api.post('/commissionary/complete', { coach_number, module_type }).then(res => res.data);
 
 export const submitCommissionarySession = (coach_number, submission_timestamp, module_type = 'COMMISSIONARY') =>

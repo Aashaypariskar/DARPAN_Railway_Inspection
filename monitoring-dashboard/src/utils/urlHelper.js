@@ -1,57 +1,69 @@
 /**
- * Utility to dynamically determine the backend API URL based on the current environment.
- * Implementation follows environment isolation requirements:
- * - Localhost or 127.0.0.1 -> Development API
- * - Hostname contains "staging" -> Staging API
- * - Otherwise -> Production API
+ * URL Helper (FINAL VERSION)
+ * - Uses VITE env (single source of truth)
+ * - No hostname-based detection
+ * - Supports images + socket
  */
 
-export const getApiBaseUrl = () => {
-    const { hostname } = window.location;
+// 🔐 Base API URL from Vite env
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-    // Development Environment
-    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
-        return `http://${hostname}:8080/api`;
-    }
-
-    // Staging Environment
-    if (hostname.toLowerCase().includes('staging') || hostname.toLowerCase().includes('uatdarpan')) {
-        return 'https://uatdarpan.premade.com/api';
-    }
-
-    // Production Environment (Default)
-    return 'https://darpan.premade.in/api';
-};
-
-export const API_BASE_URL = getApiBaseUrl();
+// 🚨 Safety check
+if (!API_BASE_URL) {
+    throw new Error("[ENV ERROR] VITE_API_BASE_URL is not defined");
+}
 
 /**
- * Image Helpers for Dashboard
+ * Export API base (if ever needed)
+ */
+export { API_BASE_URL };
+
+/**
+ * Get server base URL (remove /api)
+ * Example:
+ * http://localhost:8080/api → http://localhost:8080
+ */
+export const getServerBaseUrl = () => {
+    return API_BASE_URL.replace(/\/api$/, '');
+};
+
+/**
+ * Get initial image (before inspection)
  */
 export const getInitialImage = (d) => {
     if (!d) return null;
+
     const path = d.photo_url || d.image_path || d.before_photo_url;
     if (!path) return null;
-    
-    // Construct base URL from API_BASE_URL (removing /api)
-    const base = API_BASE_URL.replace('/api', '');
-    return `${base}/${path}`;
+
+    return buildImageUrl(path);
 };
 
+/**
+ * Get resolved image (after inspection)
+ */
 export const getResolvedImage = (d) => {
     if (!d) return null;
+
     const path = d.after_photo_url || d.resolved_image_path;
     if (!path) return null;
 
-    const base = API_BASE_URL.replace('/api', '');
-    return `${base}/${path}`;
+    return buildImageUrl(path);
 };
 
-export const getServerBaseUrl = () => API_BASE_URL.replace('/api', '');
-
+/**
+ * Generic image URL builder
+ */
 export const buildImageUrl = (path) => {
     if (!path) return null;
+
+    // Already full URL
+    if (path.startsWith("http")) return path;
+
     const base = getServerBaseUrl();
-    if (path.startsWith('http')) return path;
-    return `${base}/${path}`;
+
+    // Remove leading slash to avoid double slashes
+    const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+
+    return `${base}/${cleanPath}`;
 };

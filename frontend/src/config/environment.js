@@ -1,54 +1,43 @@
 /**
  * Environment Configuration
- * Centralized API endpoints for Development, Staging, and Production.
+ * SAFE + EXPLICIT (No auto-detection bugs)
  */
 
 const CONFIGS = {
     production: {
         BASE_URL: 'https://darpan.premade.in/api',
-        FALLBACK_URL: 'https://railway-inspection-181711399428.us-central1.run.app/api',
-        NAME: 'production'
+        FALLBACK_URL: 'https://railway-inspection-181711399428.us-central1.run.app/api'
     },
     staging: {
-        BASE_URL: 'https://uatdarpan.premade.com/api',
-        NAME: 'staging'
+        BASE_URL: 'https://uatdarpan.premade.com/api'
     },
     development: {
-        // BASE_URL: 'http://192.168.1.2:8080/api',
-
-        BASE_URL: 'http://192.168.1.12:8080/api',
-        NAME: 'development'
+        BASE_URL: 'http://192.168.1.4:8080/api'
     }
 };
 
-// Determine requested env from explicit env vars
-const envModeRaw = String(process.env.EXPO_PUBLIC_ENV || process.env.NODE_ENV || '').trim().toLowerCase();
+// 🚨 STEP 1: FORCE ENV (NO AUTO-DETECTION)
+const mode = (process.env.EXPO_PUBLIC_ENV || 'development').toLowerCase();
 
-// If running in React Native dev mode, force development.
-// Also in web, if location host is local IP/localhost, force development.
-let inferredMode = 'production';
-if (typeof __DEV__ !== 'undefined' && __DEV__) {
-    inferredMode = 'development';
-} else if (typeof window !== 'undefined') {
-    const host = window.location.hostname.toLowerCase();
-    if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
-        inferredMode = 'development';
-    }
+// 🚨 STEP 2: VALIDATE ENV
+if (!CONFIGS[mode]) {
+    throw new Error(`[ENV ERROR] Invalid environment: ${mode}`);
 }
-
-const mode = envModeRaw === 'staging'
-    ? 'staging'
-    : envModeRaw === 'production'
-    ? 'production'
-    : inferredMode === 'development'
-    ? 'development'
-    : 'production';
 
 const activeConfig = CONFIGS[mode];
 
-export const IS_DEV = mode === 'development';
+// 🔍 STEP 3: EXPORT VALUES
+export const ENV_NAME = mode;
 export const BASE_URL = activeConfig.BASE_URL;
-export const ENV_NAME = activeConfig.NAME;
-export const PROD_URLS = [CONFIGS.production.BASE_URL, CONFIGS.production.FALLBACK_URL];
+export const PROD_URLS = [
+    CONFIGS.production.BASE_URL,
+    CONFIGS.production.FALLBACK_URL
+];
 
-console.log(`[ENV] ${ENV_NAME} | BASE_URL: ${BASE_URL}`);
+// 🔥 STEP 4: LOG FOR DEBUGGING
+console.log(`
+====================================
+ENVIRONMENT : ${ENV_NAME}
+API URL     : ${BASE_URL}
+====================================
+`);

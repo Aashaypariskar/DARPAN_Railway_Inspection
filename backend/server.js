@@ -35,6 +35,7 @@ const corsOptions = {
             'http://192.168.1.2:8080',
             'http://192.168.1.12:8080',
             'http://10.178.240.216:8080',
+            "https://uatdarpan.premade.in",
             'https://darpan.premade.in  ',
             'https://railway-inspection-181711399428.us-central1.run.app'
         ];
