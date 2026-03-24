@@ -14,7 +14,7 @@ Write-Host "--- Starting Build Process ---" -ForegroundColor Cyan
 # 1. Build Dashboard
 Write-Host "[1/3] Building monitoring-dashboard..." -ForegroundColor Yellow
 Set-Location $DashboardPath
-npm run build
+npm run build:prod
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed. Deployment aborted." -ForegroundColor Red
