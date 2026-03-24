@@ -80,14 +80,16 @@ Railway_Inspection/
 
 ### 1. Database Setup
 - Install MySQL and create a database named `inspection_db`.
-- Update `backend/config/db.js` with your local credentials.
+- Update `backend/.env.development` with your credentials.
+- `USE_SQLITE=false` (Production/Remote MySQL)
+- `USE_SQLITE=true` (Local SQLite fallback)
 
 ### 2. Initialize Backend
 ```bash
 cd backend
 npm install
-node seedEndToEnd.js  # This is vital; it builds the master fleet data
-node server.js        # Server goes live on port 3000
+node seed_master.js  # This is vital; it builds the master categories & users
+npm run dev          # Server goes live on port 8080
 ```
 
 ### 3. Build & Deploy Dashboard
@@ -96,16 +98,25 @@ To serve the dashboard via the backend:
 cd monitoring-dashboard
 npm install
 npm run build         # Generates the 'dist' folder
-# The build is automatically served at: https://your-server.in/dashboard
+# The build is automatically served at: http://localhost:8080/dashboard
 ```
 
 ### 4. Launch Mobile App
 ```bash
 cd frontend
 npm install
-# Change BASE_URL in frontend/src/config/environment.js to your IP
-npx expo start
+# CRITICAL: Change BASE_URL in frontend/src/config/environment.js to your actual IP (e.g., 192.168.1.12:8080)
+npx expo start --clear
 ```
+
+---
+
+## 🛠️ Common Troubleshooting
+
+### "Network Error" on Mobile
+1. **IP Address**: Ensure `environment.js` uses your machine's **actual IP** (found via `ipconfig`) instead of `localhost`.
+2. **Port Conflict**: If the app fails to connect, check if port **8080** is occupied. Use `taskkill /F /IM node.exe` to clear old processes.
+3. **Firewall**: Ensure port 8080 is open to local network traffic.
 
 ---
 

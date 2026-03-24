@@ -192,8 +192,7 @@ npm run build:prod
 
 ```bash
 http://localhost:8080/api/health
-https://uatdarpan.premade.in/api/health
-https://darpan.premade.in/api/health
+http://192.168.1.12:8080/api/health
 ```
 
 ---
