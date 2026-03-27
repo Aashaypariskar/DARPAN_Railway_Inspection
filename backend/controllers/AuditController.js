@@ -128,14 +128,21 @@ exports.getCombinedSummary = async (req, res) => {
             return res.status(400).json({ error: 'schedule_id and area are required' });
         }
 
+        const where = {
+            schedule_id: schedule_id,
+            subcategory_name: {
+                [Op.like]: `${area}%`
+            }
+        };
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            where.user_id = req.user.id;
+        }
+
         // Query answers for this schedule and area (using LIKE for logical tagging)
         const answers = await InspectionAnswer.findAll({
-            where: {
-                schedule_id: schedule_id,
-                subcategory_name: {
-                    [Op.like]: `${area}%`
-                }
-            },
+            where,
             attributes: ['subcategory_name', 'activity_type']
         });
 

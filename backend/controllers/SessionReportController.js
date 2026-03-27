@@ -9,6 +9,14 @@ const handlebars = require('handlebars');
 
 const service = new SessionReportService();
 
+const BASE_URL = process.env.BASE_URL || 'http://192.168.1.4:8080';
+
+const toAbsoluteUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}/${path.replace(/^\/+/, '')}`;
+};
+
 // Helper to find Chrome/Edge on Windows
 const getExecutablePath = () => {
     // 1. Check for explicit environment variable first
@@ -52,11 +60,15 @@ exports.getSessionJSON = async (req, res) => {
 
         // 1. Check if this is a direct Reporting Session ID (Performance & Isolation path)
         const reportingRecord = await sequelize.query(
-            'SELECT id, module_type, source_session_id FROM reporting_sessions WHERE id = :sessionId LIMIT 1',
+            'SELECT id, module_type, source_session_id, user_id FROM reporting_sessions WHERE id = :sessionId LIMIT 1',
             { replacements: { sessionId }, type: sequelize.QueryTypes.SELECT }
         );
 
         if (reportingRecord.length > 0) {
+            // --- DATA ISOLATION ---
+            if (req.user && req.user.role !== 'SUPER_ADMIN' && reportingRecord[0].user_id !== req.user.id) {
+                return res.status(403).json({ error: 'Unauthorized: You do not have access to this report session' });
+            }
             // It's a reporting ID!
             finalSessionId = reportingRecord[0].id;
             finalModuleType = reportingRecord[0].module_type;
@@ -72,10 +84,16 @@ exports.getSessionJSON = async (req, res) => {
             
             // Re-fetch the actual reporting ID for the service to use
             const sourceRecord = await sequelize.query(
-                'SELECT id FROM reporting_sessions WHERE source_session_id = :sessionId AND module_type = :moduleType LIMIT 1',
+                'SELECT id, user_id FROM reporting_sessions WHERE source_session_id = :sessionId AND module_type = :moduleType LIMIT 1',
                 { replacements: { sessionId, moduleType: finalModuleType }, type: sequelize.QueryTypes.SELECT }
             );
-            if (sourceRecord.length > 0) finalSessionId = sourceRecord[0].id;
+            if (sourceRecord.length > 0) {
+                // --- DATA ISOLATION ---
+                if (req.user && req.user.role !== 'SUPER_ADMIN' && sourceRecord[0].user_id !== req.user.id) {
+                    return res.status(403).json({ error: 'Unauthorized: Access denied' });
+                }
+                finalSessionId = sourceRecord[0].id;
+            }
         }
 
         const report = await service.getSessionDetail(finalSessionId, finalModuleType);
@@ -98,11 +116,15 @@ exports.exportSessionPDF = async (req, res) => {
 
         // 1. Check if this is a direct Reporting Session ID
         const reportingRecord = await sequelize.query(
-            'SELECT id, module_type FROM reporting_sessions WHERE id = :sessionId LIMIT 1',
+            'SELECT id, module_type, user_id FROM reporting_sessions WHERE id = :sessionId LIMIT 1',
             { replacements: { sessionId }, type: sequelize.QueryTypes.SELECT }
         );
 
         if (reportingRecord.length > 0) {
+            // --- DATA ISOLATION ---
+            if (req.user && req.user.role !== 'SUPER_ADMIN' && reportingRecord[0].user_id !== req.user.id) {
+                return res.status(403).json({ error: 'Unauthorized: Access denied' });
+            }
             finalSessionId = reportingRecord[0].id;
             finalModuleType = reportingRecord[0].module_type;
         } else {
@@ -115,10 +137,16 @@ exports.exportSessionPDF = async (req, res) => {
             }
 
             const sourceRecord = await sequelize.query(
-                'SELECT id FROM reporting_sessions WHERE source_session_id = :sessionId AND module_type = :finalModuleType LIMIT 1',
+                'SELECT id, user_id FROM reporting_sessions WHERE source_session_id = :sessionId AND module_type = :finalModuleType LIMIT 1',
                 { replacements: { sessionId, finalModuleType }, type: sequelize.QueryTypes.SELECT }
             );
-            if (sourceRecord.length > 0) finalSessionId = sourceRecord[0].id;
+            if (sourceRecord.length > 0) {
+                // --- DATA ISOLATION ---
+                if (req.user && req.user.role !== 'SUPER_ADMIN' && sourceRecord[0].user_id !== req.user.id) {
+                    return res.status(403).json({ error: 'Unauthorized: Access denied' });
+                }
+                finalSessionId = sourceRecord[0].id;
+            }
         }
 
         // 3. Fetch normalized data using the reporting ID
@@ -137,18 +165,41 @@ exports.exportSessionPDF = async (req, res) => {
             try {
                 // --- Already an HTTP/HTTPS URL ---
                 if (relPath.startsWith('http')) {
-                    const httpModule = relPath.startsWith('https') ? https : http;
-                    const buffer = await new Promise((resolve, reject) => {
-                        httpModule.get(relPath, (res) => {
-                            const chunks = [];
-                            res.on('data', chunk => chunks.push(chunk));
-                            res.on('end', () => resolve(Buffer.concat(chunks)));
-                            res.on('error', reject);
-                        }).on('error', reject);
-                    });
-                    const ext = relPath.split('.').pop().split('?')[0].toLowerCase();
-                    const mime = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' }[ext] || 'image/jpeg';
-                    return `data:${mime};base64,${buffer.toString('base64')}`;
+                    // If it's our own BASE_URL, extract relative path to read from disk
+                    if (relPath.startsWith(BASE_URL)) {
+                        const relativePath = relPath.replace(BASE_URL, '').replace(/^\//, '');
+                        // Now treat as relative
+                        let cleanPath = relativePath.replace(/^\//, '').replace(/\//g, path.sep);
+                        const searchPaths = [
+                            path.resolve(__dirname, '..', cleanPath),
+                            path.resolve(__dirname, '..', 'public', cleanPath),
+                            path.resolve(__dirname, '..', cleanPath.replace(/^public[\\/\\]/, ''))
+                        ];
+                        for (const absolutePath of searchPaths) {
+                            if (fs.existsSync(absolutePath)) {
+                                const buffer = fs.readFileSync(absolutePath);
+                                const ext = path.extname(absolutePath).slice(1).toLowerCase();
+                                const mime = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' }[ext] || 'image/jpeg';
+                                return `data:${mime};base64,${buffer.toString('base64')}`;
+                            }
+                        }
+                        console.warn(`[PDF] Image not found on disk: ${relPath}`);
+                        return null;
+                    } else {
+                        // External URL, fetch it
+                        const httpModule = relPath.startsWith('https') ? https : http;
+                        const buffer = await new Promise((resolve, reject) => {
+                            httpModule.get(relPath, (res) => {
+                                const chunks = [];
+                                res.on('data', chunk => chunks.push(chunk));
+                                res.on('end', () => resolve(Buffer.concat(chunks)));
+                                res.on('error', reject);
+                            }).on('error', reject);
+                        });
+                        const ext = relPath.split('.').pop().split('?')[0].toLowerCase();
+                        const mime = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', gif: 'image/gif', webp: 'image/webp' }[ext] || 'image/jpeg';
+                        return `data:${mime};base64,${buffer.toString('base64')}`;
+                    }
                 }
 
                 // --- Relative or absolute file path ---
@@ -238,6 +289,16 @@ exports.exportSessionPDF = async (req, res) => {
 exports.getSessionDefects = async (req, res) => {
     try {
         const { reportingId } = req.params;
+        
+        // --- DATA ISOLATION ---
+        const sessionCheck = await sequelize.query(
+            'SELECT user_id FROM reporting_sessions WHERE id = :reportingId LIMIT 1',
+            { replacements: { reportingId }, type: sequelize.QueryTypes.SELECT }
+        );
+        if (sessionCheck.length > 0 && req.user && req.user.role !== 'SUPER_ADMIN' && sessionCheck[0].user_id !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
         const defects = await service.getSessionDefects(reportingId);
         res.json(defects);
     } catch (err) {

@@ -63,8 +63,15 @@ exports.seedReasons = async (req, res) => {
 // GET /api/commissionary/coaches
 exports.listCoaches = async (req, res) => {
     try {
+        const where = { module_type: 'COMMISSIONARY' };
+        
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            where.created_by = req.user.id;
+        }
+
         const coaches = await Coach.findAll({
-            where: { module_type: 'COMMISSIONARY' },
+            where,
             order: [['createdAt', 'DESC']]
         });
         res.json(coaches);
@@ -261,13 +268,15 @@ exports.getQuestions = async (req, res) => {
 // GET /api/commissionary/answers
 exports.getAnswers = async (req, res) => {
     try {
-        const { session_id, compartment_id, subcategory_id, activity_type } = req.query;
-        const rawModuleType = String(req.query.module_type || '').trim().toUpperCase();
-        const moduleType = rawModuleType === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
-        console.log('[ANSWERS API]', { session_id, moduleType });
-
+        const { session_id, subcategory_id, activity_type, compartment_id, module_type } = req.query;
+        const moduleType = module_type.toUpperCase();
         const session = await SessionResolutionService.resolveSession(session_id, moduleType);
         if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Unauthorized: Session ownership mismatch' });
+        }
 
         const whereClause = { 
             session_id, 
@@ -334,7 +343,7 @@ exports.saveAnswers = async (req, res) => {
 
         let photo_url = null;
         if (req.file) {
-            photo_url = `/public/uploads/${req.file.filename}`;
+            photo_url = `/uploads/${req.file.filename}`;
             console.log('[DEBUG] Image saved at:', photo_url);
         } else if (req.body.photo_url) {
             photo_url = req.body.photo_url;
@@ -343,6 +352,11 @@ exports.saveAnswers = async (req, res) => {
         // Fetch session for coach_id
         const session = await SessionResolutionService.resolveSession(session_id, moduleType);
         if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Unauthorized: Session ownership mismatch' });
+        }
 
         // Fetch question text for snapshot (required by schema)
         const qData = await Question.findByPk(question_id);
@@ -396,7 +410,8 @@ exports.saveAnswers = async (req, res) => {
                 photo_url: photo_url || ansRecord.photo_url,
                 question_text_snapshot: qData?.text || ansRecord.question_text_snapshot,
                 defect_locked: isComplete ? 1 : 0,
-                module_type: moduleType
+                module_type: moduleType,
+                user_id: ansRecord.user_id || req.user?.id || null
             });
         } else {
             const AnswerModel = moduleType === 'AMENITY' ? InspectionAnswer : CommissionaryAnswer;
@@ -413,7 +428,8 @@ exports.saveAnswers = async (req, res) => {
                 photo_url,
                 question_text_snapshot: qData?.text || 'Standard Question',
                 defect_locked: isComplete ? 1 : 0,
-                module_type: moduleType
+                module_type: moduleType,
+                user_id: req.user?.id || null
             });
         }
 
@@ -600,10 +616,22 @@ exports.getProgress = async (req, res) => {
             });
 
             // Pre-compute totalAnswered once to avoid multiple identical DB queries
+            const countWhere = { 
+                session_id: session.id, 
+                coach_id: session.coach_id, 
+                subcategory_id: sub.id, 
+                status: { [Op.not]: null }, 
+                module_type: moduleType 
+            };
+            // --- DATA ISOLATION ---
+            if (req.user && req.user.role !== 'SUPER_ADMIN') {
+                countWhere.created_by = req.user.id; // Or user_id if column exists
+            }
+
             const totalAnswered = await CommissionaryAnswer.count({
                 distinct: true,
                 col: 'question_id',
-                where: { session_id: session.id, coach_id: session.coach_id, subcategory_id: sub.id, status: { [Op.not]: null }, module_type: moduleType }
+                where: countWhere
             });
 
             const majorAnswered = majorIds.length > 0
@@ -689,6 +717,11 @@ exports.completeSession = async (req, res) => {
 
         if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
 
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Unauthorized' });
+        }
+
         // Phase 26: Strict Completion Validation
         const answers = await CommissionaryAnswer.findAll({ 
             where: { session_id: session.id, module_type: moduleType } 
@@ -731,6 +764,11 @@ exports.getCombinedReport = async (req, res) => {
         const moduleType = module_type === 'AMENITY' ? 'AMENITY' : 'COMMISSIONARY';
         const session = await SessionResolutionService.resolveSession(session_id, moduleType);
         if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ success: false, message: 'Unauthorized' });
+        }
 
         const answers = await CommissionaryAnswer.findAll({
             where: { session_id, module_type: moduleType },

@@ -12,9 +12,18 @@ const {
     CommissionarySession,
     SickLineSession,
     CaiSession,
-    sequelize
+    sequelize,
+    Op
 } = require('../models');
 const SessionResolutionService = require('../services/SessionResolutionService');
+
+const BASE_URL = process.env.BASE_URL || 'http://192.168.1.4:8080';
+
+const toAbsoluteUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}/${path.replace(/^\/+/, '')}`;
+};
 
 
 /**
@@ -29,9 +38,9 @@ exports.resolveDefect = async (req, res) => {
         const resolution_remark = req.body.resolution_remark || req.body.remarks;
 
         // Construct image path accurately as per User Request
-        const imagePath = req.file
+        const imagePath = toAbsoluteUrl(req.file
             ? `uploads/resolutions/${req.file.filename}`
-            : req.body.photo_url || null;
+            : req.body.photo_url || null);
 
         if (!answer_id) {
             return res.status(400).json({ error: 'Missing defect ID' });
@@ -70,6 +79,23 @@ exports.resolveDefect = async (req, res) => {
         const answer = await Model.findByPk(answer_id);
         if (!answer) {
             return res.status(404).json({ error: 'Defect record not found' });
+        }
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            // For InspectionAnswer, we have direct user_id
+            if (activeType === 'PITLINE' || activeType === 'AMENITY' || activeType === 'WSP') {
+                if (answer.user_id && answer.user_id !== req.user.id) {
+                    return res.status(403).json({ error: 'Unauthorized: You do not own this defect record' });
+                }
+            } else {
+                // For other types, we'd need to check the session, 
+                // but as a strict rule if user_id exists in record, check it
+                if (answer.user_id && answer.user_id !== req.user.id) {
+                    return res.status(403).json({ error: 'Unauthorized: Ownership mismatch' });
+                }
+                // If no user_id in record, we assume session ownership check was done during retrieval
+            }
         }
 
         const session_id = answer.session_id;
@@ -159,20 +185,50 @@ exports.resolveDefect = async (req, res) => {
  */
 exports.getPendingDefects = async (req, res) => {
     try {
-        const { session_id, type, schedule_id, mode, compartment_id, train_id, coach_id } = req.query;
+        let { session_id, type, schedule_id, mode, compartment_id, train_id, coach_id } = req.query;
         let subcategory_id = req.query.subcategory_id;
         // NORMALIZATION GUARD: Coerce 0 or missing to NULL to prevent FK violations
         if (!subcategory_id || subcategory_id === 0 || subcategory_id === '0') {
             subcategory_id = null;
         }
 
-        if (!type || (!session_id && !train_id && !coach_id)) {
+        if (!type) {
+            // Default to COMMISSIONARY for defects tab
+            type = 'COMMISSIONARY';
+        }
+
+        // Deterministic Mapping for GENERIC type
+        if (type === 'GENERIC') {
+            const queryModuleType = req.query.module_type || (where ? where.module_type : null);
+            if (queryModuleType === 'COMMISSIONARY') {
+                type = 'COMMISSIONARY';
+            } else if (queryModuleType === 'WSP') {
+                type = 'AMENITY';
+            } else if (session_id) {
+                const { CommissionarySession } = require('../models');
+                const session = await CommissionarySession.findByPk(session_id).catch(() => null);
+                if (session && session.coach_module_type === 'COMMISSIONARY') {
+                    type = 'COMMISSIONARY';
+                }
+            }
+        }
+
+        if (!session_id && !train_id && !coach_id && type !== 'COMMISSIONARY') {
             return res.status(400).json({ error: 'Missing session_id or type (or train/coach context for PitLine)' });
         }
 
         let Model;
         // Standardize: ALWAYS filter by status='DEFICIENCY' and resolved=0
         let where = { status: 'DEFICIENCY', resolved: 0 };
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            // Only set user_id if the model has the column
+            if (Model && Model.rawAttributes && Model.rawAttributes.user_id) {
+                where.user_id = req.user.id;
+            }
+        }
+
         if (session_id) where.session_id = session_id;
         if (train_id) where.train_id = train_id;
         if (coach_id) where.coach_id = coach_id;
@@ -209,7 +265,10 @@ exports.getPendingDefects = async (req, res) => {
             }
         } else if (type === 'AMENITY') {
             Model = InspectionAnswer;
-            where.module_type = 'WSP'; // AMENITY often identifies as WSP framework in DB
+            // SAFE module_type removal for AMENITY
+            if (where.module_type === 'WSP') {
+                delete where.module_type;
+            }
             where.resolved = 0;
             if (subcategory_id) where.subcategory_id = subcategory_id;
             if (compartment_id) where.compartment_id = compartment_id;
@@ -220,7 +279,24 @@ exports.getPendingDefects = async (req, res) => {
             if (compartment_id) where.compartment_id = compartment_id;
         }
 
-        let defects = await Model.findAll({ where });
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            if (Model && Model.rawAttributes && Model.rawAttributes.user_id) {
+                where.user_id = req.user.id;
+            }
+        }
+
+        let defects = [];
+        if (type === 'AMENITY') {
+            // Data-based fallback (NOT count-based)
+            defects = await CommissionaryAnswer.findAll({ where });
+            if (!defects || defects.length === 0) {
+                // Fallback to InspectionAnswer with WSP filter
+                defects = await InspectionAnswer.findAll({ where: { ...where, module_type: 'WSP' } });
+            }
+        } else {
+            defects = await Model.findAll({ where });
+        }
         const { normalizeImagePath, findImageByTimestamp } = require('../utils/pathHelper');
 
         const processedDefects = await Promise.all(defects.map(async (d) => {
@@ -239,11 +315,12 @@ exports.getPendingDefects = async (req, res) => {
 
             return {
                 ...defectObj,
-                photo_url: photoUrl,
-                after_photo_url: normalizeImagePath(defectObj.after_photo_url) || normalizeImagePath(defectObj.resolved_image_path) || null
+                photo_url: toAbsoluteUrl(photoUrl) || defectObj.photo_url || defectObj.image_path || null,
+                after_photo_url: toAbsoluteUrl(normalizeImagePath(defectObj.after_photo_url) || normalizeImagePath(defectObj.resolved_image_path) || null) || defectObj.after_photo_url || null
             };
         }));
 
+        res.set('Cache-Control', 'no-cache');
         res.json({ success: true, defects: processedDefects });
 
     } catch (err) {
@@ -300,23 +377,19 @@ exports.autosave = async (req, res) => {
         // Deficiency records are allowed to be incomplete during autosave
         // Validation will be enforced at Checkpoint and Submission
 
-        // Normalize image paths to strictly relative (uploads/...)
-        const normalizePath = (p) => {
-            if (!p) return null;
-            const match = p.match(/uploads\/.+$/);
-            return match ? match[0] : p.replace(/^\/+/, "");
-        };
+        // Normalize image paths to absolute URLs
+        const normalizePath = (p) => toAbsoluteUrl(p);
 
         const pickBestIncoming = (existing, ...incoming) => {
             // Priority 1: Current valid server path in database
-            if (existing && typeof existing === 'string' && existing.includes('uploads/')) return existing;
+            if (existing && typeof existing === 'string' && (existing.includes('uploads/') || existing.startsWith('http'))) return toAbsoluteUrl(existing);
 
             // Priority 2: Any incoming path that looks like a server upload path
             const incomingServerPath = incoming.find(p => p && typeof p === 'string' && p.includes('uploads/'));
-            if (incomingServerPath) return incomingServerPath;
+            if (incomingServerPath) return toAbsoluteUrl(incomingServerPath);
 
             // Priority 3: First valid string (likely a file:// or absolute path)
-            return incoming.find(p => p && typeof p === 'string') || null;
+            return toAbsoluteUrl(incoming.find(p => p && typeof p === 'string') || null);
         };
 
         const incomingPhoto = pickBestIncoming(photo_url, req.body.image_url, req.body.image_path);
@@ -799,11 +872,7 @@ exports.saveCheckpoint = async (req, res) => {
             return res.status(403).json({ error: 'Cannot edit a submitted or closed inspection' });
         }
 
-        const normalizePath = (p) => {
-            if (!p) return null;
-            const match = p.match(/uploads\/.+$/);
-            return match ? match[0] : p.replace(/^\/+/, "");
-        };
+        const normalizePath = toAbsoluteUrl;
 
         if (answers && Array.isArray(answers)) {
             const upsertDataArray = [];

@@ -18,8 +18,15 @@ const getQuestions = async (req, res) => {
 // GET /api/cai/coaches
 const listCoaches = async (req, res) => {
     try {
+        const where = { module_type: 'CAI' };
+        
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            where.created_by = req.user.id;
+        }
+
         const coaches = await Coach.findAll({
-            where: { module_type: 'CAI' },
+            where,
             order: [['createdAt', 'DESC']]
         });
         res.json(coaches);
@@ -79,6 +86,11 @@ const getAnswers = async (req, res) => {
 
         const session = await SessionResolutionService.resolveSession(session_id, 'CAI');
         if (!session) return res.status(404).json({ error: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.inspector_id !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized: Session ownership mismatch' });
+        }
 
         const answers = await CaiAnswer.findAll({ 
             where: { 
@@ -165,6 +177,11 @@ const submitSession = async (req, res) => {
         const session = await SessionResolutionService.resolveSession(session_id, 'CAI');
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.inspector_id !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
         // Submission Integrity Check: Ensure all active questions have been answered
         const [totalQuestions, answeredCount] = await Promise.all([
             CaiQuestion.count({ where: { is_active: true } }),
@@ -240,6 +257,11 @@ const getProgress = async (req, res) => {
             where: { coach_id: coach.id, status: { [Op.in]: ['DRAFT', 'IN_PROGRESS', 'SUBMITTED'] } },
             order: [['createdAt', 'DESC']]
         });
+
+        // --- DATA ISOLATION ---
+        if (session && req.user && req.user.role !== 'SUPER_ADMIN' && session.inspector_id !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
 
         const total = await CaiQuestion.count({ where: { is_active: true } });
         let answered = 0;

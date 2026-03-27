@@ -27,18 +27,30 @@ exports.getTrains = async (req, res) => {
 
             const totalNeeded = coaches.length * totalQPerCoach;
             
+            const sessionWhere = { train_id: t.id, status: { [Op.in]: ['IN_PROGRESS', 'SUBMITTED'] } };
+            // --- DATA ISOLATION ---
+            if (req.user && req.user.role !== 'SUPER_ADMIN') {
+                sessionWhere.inspector_id = req.user.id;
+            }
+            
             const sessions = await PitLineSession.findAll({
-                where: { train_id: t.id, status: { [Op.in]: ['IN_PROGRESS', 'SUBMITTED'] } }
+                where: sessionWhere
             });
             const sessionIds = sessions.map(s => String(s.id));
             
+            const answerWhere = { 
+                [Op.or]: [
+                    { session_id: { [Op.in]: sessionIds } },
+                    { submission_id: { [Op.in]: sessionIds } }
+                ]
+            };
+            // --- DATA ISOLATION ---
+            if (req.user && req.user.role !== 'SUPER_ADMIN') {
+                answerWhere.user_id = req.user.id;
+            }
+
             const answeredCount = sessionIds.length > 0 ? await InspectionAnswer.count({
-                where: { 
-                    [Op.or]: [
-                        { session_id: { [Op.in]: sessionIds } },
-                        { submission_id: { [Op.in]: sessionIds } }
-                    ]
-                }
+                where: answerWhere
             }) : 0;
 
             return {
@@ -317,12 +329,19 @@ exports.getTrainProgress = async (req, res) => {
 
         // 2. Fetch Sessions and Answers in Batch
         const coachIds = coaches.map(c => c.id);
+        const sessionWhere = { 
+            train_id: id, 
+            coach_id: { [Op.in]: coachIds }, 
+            status: { [Op.in]: ['IN_PROGRESS', 'SUBMITTED'] } 
+        };
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            sessionWhere.inspector_id = req.user.id;
+        }
+
         const sessions = await PitLineSession.findAll({
-            where: { 
-                train_id: id, 
-                coach_id: { [Op.in]: coachIds }, 
-                status: { [Op.in]: ['IN_PROGRESS', 'SUBMITTED'] } 
-            },
+            where: sessionWhere,
             order: [['createdAt', 'DESC']]
         });
 
@@ -335,13 +354,20 @@ exports.getTrainProgress = async (req, res) => {
         });
 
         const sessionIds = Object.values(latestSessions).map(s => String(s.id));
+        const answerWhere = {
+            [Op.or]: [
+                { submission_id: { [Op.in]: sessionIds } },
+                { session_id: { [Op.in]: sessionIds } }
+            ]
+        };
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            answerWhere.user_id = req.user.id;
+        }
+
         const allAnswers = sessionIds.length > 0 ? await InspectionAnswer.findAll({
-            where: {
-                [Op.or]: [
-                    { submission_id: { [Op.in]: sessionIds } },
-                    { session_id: { [Op.in]: sessionIds } }
-                ]
-            },
+            where: answerWhere,
             attributes: ['session_id', 'submission_id', 'status']
         }) : [];
 
@@ -409,6 +435,11 @@ exports.submitSession = async (req, res) => {
 
         const session = await PitLineSession.findByPk(session_id);
         if (!session) return res.status(404).json({ error: 'Pitline Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.inspector_id !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized: You do not own this session' });
+        }
 
         const SessionStatusService = require('../services/SessionStatusService');
         await SessionStatusService.updateStatus(session.id, 'PITLINE', 'SUBMITTED');

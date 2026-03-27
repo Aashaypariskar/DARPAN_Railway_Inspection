@@ -17,8 +17,15 @@ const { calculateCompliance } = require('../utils/compliance');
 // GET /api/sickline/coaches (Using shared Coach model but separate session flow)
 exports.listCoaches = async (req, res) => {
     try {
+        const where = { module_type: 'SICKLINE' };
+        
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            where.created_by = req.user.id;
+        }
+
         const coaches = await Coach.findAll({
-            where: { module_type: 'SICKLINE' },
+            where,
             order: [['createdAt', 'DESC']]
         });
         res.json(coaches);
@@ -175,6 +182,11 @@ exports.getAnswers = async (req, res) => {
         const session = await SessionResolutionService.resolveSession(session_id, 'SICKLINE');
         if (!session) return res.status(404).json({ error: 'Session not found' });
 
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized: Access denied' });
+        }
+
         const answers = await SickLineAnswer.findAll({
             where: { 
                 session_id,
@@ -210,15 +222,13 @@ exports.saveAnswers = async (req, res) => {
             } catch (e) { parsedReasons = []; }
         }
 
-        let photo_url = null;
-        if (req.file) {
-            photo_url = `/public/uploads/${req.file.filename}`;
-        } else if (req.body.photo_url) {
-            photo_url = req.body.photo_url;
-        }
-
         const session = await SessionResolutionService.resolveSession(session_id, 'SICKLINE');
         if (!session) return res.status(404).json({ error: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
 
         const qData = await Question.findByPk(question_id);
 
@@ -304,6 +314,11 @@ exports.getProgress = async (req, res) => {
         const session = await SickLineSession.findByPk(sessionId);
         if (!session) return res.json({ totalQuestions: total, answeredCount: 0 });
 
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
         const answered = await SickLineAnswer.count({
             where: {
                 session_id: sessionId,
@@ -331,6 +346,11 @@ exports.completeSession = async (req, res) => {
         const today = new Date().toISOString().split('T')[0];
         const session = await SickLineSession.findOne({ where: { coach_id: coach.id, inspection_date: today } });
         if (!session) return res.status(404).json({ error: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
 
         await SessionStatusService.updateStatus(session.id, 'SICKLINE', 'COMPLETED');
         res.json({ success: true });
@@ -399,6 +419,11 @@ exports.getCombinedReport = async (req, res) => {
 
         const session = await SessionResolutionService.resolveSession(session_id, 'SICKLINE');
         if (!session) return res.status(404).json({ error: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
 
         const answers = await SickLineAnswer.findAll({
             where: { session_id },

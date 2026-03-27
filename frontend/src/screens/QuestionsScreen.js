@@ -595,7 +595,7 @@ const QuestionsScreen = ({ route, navigation }) => {
                         style={styles.defectsHeaderBtn}
                         onPress={() => navigation.navigate('Defects', {
                             session_id: params.session_id || params.sessionId,
-                            module_type: (params.module_type || params.type || '').toUpperCase() === 'AMENITY' ? 'AMENITY' : ((params.module_type || params.type || '').toLowerCase().includes('wsp') ? 'WSP' : (params.module_type || params.type || 'AMENITY')),
+                            module_type: params.module_type || params.type,
                             coach_number: params.coach_number || params.coachNumber,
                             mode: params.mode,
                             category_name: params.category_name || params.categoryName,

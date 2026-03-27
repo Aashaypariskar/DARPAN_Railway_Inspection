@@ -2,6 +2,14 @@ const ReportQueryService = require('../services/ReportQueryService');
 const XLSX = require('xlsx');
 const ExcelJS = require('exceljs');
 
+const BASE_URL = process.env.BASE_URL || 'http://192.168.1.4:8080';
+
+const toAbsoluteUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}/${path.replace(/^\/+/, '')}`;
+};
+
 /**
  * Report Controller
  * Handles Production-Grade Reporting requests with optimization and safety checks.
@@ -17,7 +25,7 @@ exports.getSummary = async (req, res) => {
             return res.status(400).json({ error: 'fromDate and toDate are required' });
         }
 
-        const data = await ReportQueryService.getSummaryReport({ fromDate, toDate, moduleType });
+        const data = await ReportQueryService.getSummaryReport({ fromDate, toDate, moduleType }, req.user);
         console.log(`[REPORT] Summary Result: ${data ? 'Data Found' : 'No Data'}`);
         res.json({ data });
     } catch (err) {
@@ -30,7 +38,7 @@ exports.getSummary = async (req, res) => {
 exports.getStrategicDashboard = async (req, res) => {
     try {
         console.log(`[REPORT] Strategic Dashboard Data Requested`);
-        const data = await ReportQueryService.getStrategicDashboard();
+        const data = await ReportQueryService.getStrategicDashboard(req.user);
         res.json(data);
     } catch (err) {
         console.error('Strategic Dashboard Error:', err);
@@ -52,7 +60,7 @@ exports.getInspectors = async (req, res) => {
             fromDate, toDate,
             page: parseInt(page),
             limit: parseInt(limit)
-        });
+        }, req.user);
 
         console.log(`[REPORT] Inspector Result: ${data?.length || 0} rows found`);
 
@@ -85,7 +93,7 @@ exports.getAssets = async (req, res) => {
             fromDate, toDate,
             page: parseInt(page),
             limit: parseInt(limit)
-        });
+        }, req.user);
 
         console.log(`[REPORT] Asset Result: ${data?.length || 0} rows found`);
 
@@ -116,7 +124,7 @@ exports.getAging = async (req, res) => {
             fromDate, toDate,
             page: parseInt(page),
             limit: parseInt(limit)
-        });
+        }, req.user);
 
         res.json({
             data,
@@ -145,7 +153,7 @@ exports.getRepeated = async (req, res) => {
             fromDate, toDate,
             page: parseInt(page),
             limit: parseInt(limit)
-        });
+        }, req.user);
 
         res.json({
             data,
@@ -169,7 +177,7 @@ exports.getRecent = async (req, res) => {
         const { data, total } = await ReportQueryService.getRecentSessions({
             page: parseInt(page),
             limit: parseInt(limit)
-        });
+        }, req.user);
 
         res.json({
             data,
@@ -202,29 +210,29 @@ exports.exportReport = async (req, res) => {
         // Dynamic data fetching based on report type
         switch (type) {
             case 'SUMMARY':
-                const summary = await ReportQueryService.getSummaryReport(params);
+                const summary = await ReportQueryService.getSummaryReport(params, req.user);
                 reportData = [summary];
                 reportTitle = 'Summary_Metrics';
                 break;
             case 'INSPECTORS':
-                const { data: inspectors } = await ReportQueryService.getInspectorReport({ ...params, page: 1, limit: EXPORT_LIMIT });
+                const { data: inspectors } = await ReportQueryService.getInspectorReport({ ...params, page: 1, limit: EXPORT_LIMIT }, req.user);
                 reportData = inspectors;
                 reportTitle = 'Inspector_Performance';
                 break;
             case 'AGING':
-                const { data: aging } = await ReportQueryService.getAgingReport({ ...params, page: 1, limit: EXPORT_LIMIT });
+                const { data: aging } = await ReportQueryService.getAgingReport({ ...params, page: 1, limit: EXPORT_LIMIT }, req.user);
                 reportData = aging;
                 reportTitle = 'Defect_Aging';
                 break;
             case 'REPEATED':
-                const { data: repeated } = await ReportQueryService.getRepeatedReport({ ...params, page: 1, limit: EXPORT_LIMIT });
+                const { data: repeated } = await ReportQueryService.getRepeatedReport({ ...params, page: 1, limit: EXPORT_LIMIT }, req.user);
                 reportData = repeated;
                 reportTitle = 'Repeated_Defects';
                 break;
             case 'SESSION_DETAILS': // History tab
             case 'HISTORY':
             default:
-                const { data: history } = await ReportQueryService.getRecentSessions({ ...params, page: 1, limit: EXPORT_LIMIT });
+                const { data: history } = await ReportQueryService.getRecentSessions({ ...params, page: 1, limit: EXPORT_LIMIT }, req.user);
                 reportData = history;
                 reportTitle = 'Inspection_History';
                 break;
@@ -279,7 +287,7 @@ exports.exportCSV = async (req, res) => {
         const params = { fromDate, toDate, moduleType, inspectorId, page: 1, limit: EXPORT_LIMIT };
 
         // Fetch recent sessions as the primary export dataset
-        const { data: sessions } = await ReportQueryService.getRecentSessions(params);
+        const { data: sessions } = await ReportQueryService.getRecentSessions(params, req.user);
 
         if (!sessions || sessions.length === 0) {
             return res.status(404).json({ error: 'No data found for the selected filters.' });
@@ -319,7 +327,7 @@ exports.exportExcel = async (req, res) => {
 
         const { EXPORT_LIMIT } = require('../services/ReportConstants');
         const params = { fromDate, toDate, moduleType, inspectorId, page: 1, limit: EXPORT_LIMIT };
-        const { data: sessions } = await ReportQueryService.getRecentSessions(params);
+        const { data: sessions } = await ReportQueryService.getRecentSessions(params, req.user);
 
         if (!sessions || sessions.length === 0) {
             return res.status(404).json({ error: 'No data found for the selected filters.' });
@@ -404,6 +412,13 @@ const { sequelize } = require('../models');
 // Extract unique filter options for Mobile App drop-downs
 exports.getMobileReportFilters = async (req, res) => {
     try {
+        const replacements = {};
+        let userFilter = '';
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            userFilter = ' AND user_id = :userId';
+            replacements.userId = req.user.id;
+        }
+
         const sql = `
             SELECT DISTINCT 
                 train_id as train_no, 
@@ -411,10 +426,10 @@ exports.getMobileReportFilters = async (req, res) => {
                 module_type as inspection_type,
                 status as activity_type
             FROM reporting_sessions
-            WHERE UPPER(status) IN ('FINALIZED', 'COMPLETED', 'SUBMITTED')
+            WHERE UPPER(status) IN ('FINALIZED', 'COMPLETED', 'SUBMITTED') ${userFilter}
         `;
         
-        const results = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+        const results = await sequelize.query(sql, { replacements, type: sequelize.QueryTypes.SELECT });
 
         const trains = [...new Set(results.map(r => r.train_no).filter(Boolean))];
         const coaches = [...new Set(results.map(r => r.coach_no).filter(Boolean))];
@@ -445,6 +460,12 @@ exports.getMobileReports = async (req, res) => {
         // Combine both finished and in-progress for mobile history log
         let whereClause = "UPPER(rs.status) NOT IN ('DELETED', 'ARCHIVED')";
         let replacements = { limit: parseInt(limit), offset: parseInt(offset) };
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            whereClause += " AND rs.user_id = :userId";
+            replacements.userId = req.user.id;
+        }
 
         if (train_no) { whereClause += " AND rs.train_id = :train_no"; replacements.train_no = train_no; }
         if (coach_no) { whereClause += " AND rs.coach_id = :coach_no"; replacements.coach_no = coach_no; }
@@ -539,6 +560,11 @@ exports.getReportDetails = async (req, res) => {
 
         const reportSession = session[0];
 
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && reportSession.user_id !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized: You do not have access to this report' });
+        }
+
         // 2. Fetch all answers for this session with Activity context
         const answers = await sequelize.query(
             `SELECT
@@ -592,7 +618,9 @@ exports.getReportDetails = async (req, res) => {
                 item_name: ans.section_title,
                 subcategory_name: ans.section_title,
                 reasons: typeof ans.reasons === 'string' ? JSON.parse(ans.reasons) : (ans.reasons || []),
-                activity: ans.activity_type || 'General'
+                activity: ans.activity_type || 'General',
+                photo_url: toAbsoluteUrl(ans.photo_url),
+                after_photo_url: toAbsoluteUrl(ans.after_photo_url)
             };
         });
 

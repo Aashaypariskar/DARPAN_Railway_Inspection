@@ -4,6 +4,7 @@
     "slug": "darpan-app",
     "owner": "aashaypariskar16",
     "version": "1.0.0",
+    "orientation": "default",
     "icon": "./assets/DARPAN_Logo.png",
     "android": {
       "package": "in.co.premade.darpan",
@@ -11,7 +12,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/DARPAN_Logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "INTERNET"
+      ],
+      "edgeToEdgeEnabled": true
     },
     "plugins": [
       "expo-asset"

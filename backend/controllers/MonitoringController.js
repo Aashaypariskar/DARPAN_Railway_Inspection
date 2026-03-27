@@ -6,7 +6,7 @@ const queryService = require('../services/MonitoringQueryService');
 
 exports.getSummary = async (req, res) => {
     try {
-        const stats = await queryService.getSummaryStats();
+        const stats = await queryService.getSummaryStats(req.user);
         res.json(stats);
     } catch (err) {
         console.error('Monitoring Summary Error:', err);
@@ -26,7 +26,7 @@ exports.getSessions = async (req, res) => {
             status: req.query.status
         };
 
-        const sessions = await queryService.getUnifiedSessions(page, limit, filters);
+        const sessions = await queryService.getUnifiedSessions(page, limit, filters, req.user);
         res.json(sessions);
     } catch (err) {
         console.error('Monitoring Sessions Error:', err);
@@ -46,7 +46,7 @@ exports.getDefects = async (req, res) => {
             status: req.query.status
         };
 
-        const defects = await queryService.getUnifiedDefects(page, limit, filters);
+        const defects = await queryService.getUnifiedDefects(page, limit, filters, req.user);
         res.json(defects);
     } catch (err) {
         console.error('Monitoring Defects Error:', err);

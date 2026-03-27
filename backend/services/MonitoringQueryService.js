@@ -11,7 +11,7 @@ const path = require('path');
  * getUnifiedSessions
  * Normalizes all session tables into a single stream with dynamic filtering
  */
-exports.getUnifiedSessions = async (page, limit, filters = {}) => {
+exports.getUnifiedSessions = async (page, limit, filters = {}, currentUser = null) => {
     const offset = (page - 1) * limit;
     const subLimit = (page * limit) + 50;
     const replacements = { limit, offset, subLimit };
@@ -36,13 +36,18 @@ exports.getUnifiedSessions = async (page, limit, filters = {}) => {
             replacements.startDate = `${filters.startDate} 00:00:00`;
             replacements.endDate = `${filters.endDate} 23:59:59`;
         }
-        if (filters.inspector) {
-            whereArr.push(`s.${mod.inspectorCol} = :inspector`);
-            replacements.inspector = filters.inspector;
-        }
         if (filters.status) {
             whereArr.push(`s.status = :status`);
             replacements.status = filters.status;
+        }
+
+        // --- DATA ISOLATION ---
+        if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+            whereArr.push(`s.${mod.inspectorCol} = :currentUserId`);
+            replacements.currentUserId = currentUser.id;
+        } else if (filters.inspector) {
+            whereArr.push(`s.${mod.inspectorCol} = :inspector`);
+            replacements.inspector = filters.inspector;
         }
 
         const dateExpr = isSQLite ? `datetime(s.createdAt)` : `s.createdAt`;
@@ -92,7 +97,7 @@ exports.getUnifiedSessions = async (page, limit, filters = {}) => {
  * getUnifiedDefects
  * Normalizes all answer tables into a single stream of deficiencies with dynamic filtering
  */
-exports.getUnifiedDefects = async (page, limit, filters = {}) => {
+exports.getUnifiedDefects = async (page, limit, filters = {}, currentUser = null) => {
     const offset = (page - 1) * limit;
     const subLimit = (page * limit) + 50;
     const replacements = { limit, offset, subLimit };
@@ -118,7 +123,11 @@ exports.getUnifiedDefects = async (page, limit, filters = {}) => {
             whereArr.push(`resolved = :status`);
             replacements.status = filters.status;
         }
-        if (filters.inspector) {
+        // --- DATA ISOLATION ---
+        if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+            whereArr.push(`session_id IN (SELECT id FROM ${mod.sessionTable} WHERE ${mod.inspectorCol} = :currentUserId)`);
+            replacements.currentUserId = currentUser.id;
+        } else if (filters.inspector) {
             whereArr.push(`session_id IN (SELECT id FROM ${mod.sessionTable} WHERE ${mod.inspectorCol} = :inspector)`);
             replacements.inspector = filters.inspector;
         }
@@ -260,74 +269,99 @@ exports.getUnifiedDefects = async (page, limit, filters = {}) => {
  * getSummaryStats
  * Returns enhanced aggregated statistics for charts
  */
-exports.getSummaryStats = async () => {
+exports.getSummaryStats = async (currentUser = null) => {
     const isSQLite = sequelize.options.dialect === 'sqlite';
     const today = new Date().toISOString().split('T')[0];
     const todayStart = `${today} 00:00:00`;
     const todayEnd = `${today} 23:59:59`;
 
+    // Isolation Logic
+    let replacements = { todayStart, todayEnd };
+    let userFilters = {
+        wsp: '', sick: '', comm: '', cai: '', pit: '',
+        insp_ans: '', sick_ans: '', comm_ans: '', cai_ans: ''
+    };
+
+    if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+        replacements.userId = currentUser.id;
+        const filter = ' AND created_by = :userId';
+        const filterInsp = ' AND inspector_id = :userId';
+        const filterAns = ' AND session_id IN (SELECT id FROM wsp_sessions WHERE created_by = :userId)'; // This is complex, let's simplify per subquery
+        
+        userFilters.wsp = ' AND created_by = :userId';
+        userFilters.sick = ' AND created_by = :userId';
+        userFilters.comm = ' AND created_by = :userId';
+        userFilters.cai = ' AND inspector_id = :userId';
+        userFilters.pit = ' AND inspector_id = :userId';
+        
+        userFilters.insp_ans = ' AND session_id IN (SELECT id FROM wsp_sessions WHERE created_by = :userId)';
+        userFilters.sick_ans = ' AND session_id IN (SELECT id FROM sickline_sessions WHERE created_by = :userId)';
+        userFilters.comm_ans = ' AND session_id IN (SELECT id FROM commissionary_sessions WHERE created_by = :userId)';
+        userFilters.cai_ans = ' AND session_id IN (SELECT id FROM cai_sessions WHERE inspector_id = :userId)';
+    }
+
     const countsQuery = `
         SELECT
             (
-                (SELECT COUNT(*) FROM wsp_sessions WHERE createdAt BETWEEN :todayStart AND :todayEnd) +
-                (SELECT COUNT(*) FROM sickline_sessions WHERE createdAt BETWEEN :todayStart AND :todayEnd) +
-                (SELECT COUNT(*) FROM commissionary_sessions WHERE createdAt BETWEEN :todayStart AND :todayEnd) +
-                (SELECT COUNT(*) FROM cai_sessions WHERE createdAt BETWEEN :todayStart AND :todayEnd) +
-                (SELECT COUNT(*) FROM pitline_sessions WHERE createdAt BETWEEN :todayStart AND :todayEnd)
+                (SELECT COUNT(*) FROM wsp_sessions WHERE (createdAt BETWEEN :todayStart AND :todayEnd) ${userFilters.wsp}) +
+                (SELECT COUNT(*) FROM sickline_sessions WHERE (createdAt BETWEEN :todayStart AND :todayEnd) ${userFilters.sick}) +
+                (SELECT COUNT(*) FROM commissionary_sessions WHERE (createdAt BETWEEN :todayStart AND :todayEnd) ${userFilters.comm}) +
+                (SELECT COUNT(*) FROM cai_sessions WHERE (createdAt BETWEEN :todayStart AND :todayEnd) ${userFilters.cai}) +
+                (SELECT COUNT(*) FROM pitline_sessions WHERE (createdAt BETWEEN :todayStart AND :todayEnd) ${userFilters.pit})
             ) AS total_inspections_today,
             (
-                (SELECT COUNT(*) FROM inspection_answers WHERE status = 'DEFICIENCY' AND resolved = 0) +
-                (SELECT COUNT(*) FROM sickline_answers WHERE status = 'DEFICIENCY' AND resolved = 0) +
-                (SELECT COUNT(*) FROM commissionary_answers WHERE status = 'DEFICIENCY' AND resolved = 0) +
-                (SELECT COUNT(*) FROM cai_answers WHERE status = 'DEFICIENCY' AND resolved = 0)
+                (SELECT COUNT(*) FROM inspection_answers WHERE status = 'DEFICIENCY' AND resolved = 0 ${userFilters.insp_ans}) +
+                (SELECT COUNT(*) FROM sickline_answers WHERE status = 'DEFICIENCY' AND resolved = 0 ${userFilters.sick_ans}) +
+                (SELECT COUNT(*) FROM commissionary_answers WHERE status = 'DEFICIENCY' AND resolved = 0 ${userFilters.comm_ans}) +
+                (SELECT COUNT(*) FROM cai_answers WHERE status = 'DEFICIENCY' AND resolved = 0 ${userFilters.cai_ans})
             ) AS total_open_defects,
             (
-                (SELECT COUNT(*) FROM inspection_answers WHERE status = 'DEFICIENCY' AND resolved = 1) +
-                (SELECT COUNT(*) FROM sickline_answers WHERE status = 'DEFICIENCY' AND resolved = 1) +
-                (SELECT COUNT(*) FROM commissionary_answers WHERE status = 'DEFICIENCY' AND resolved = 1) +
-                (SELECT COUNT(*) FROM cai_answers WHERE status = 'DEFICIENCY' AND resolved = 1)
+                (SELECT COUNT(*) FROM inspection_answers WHERE status = 'DEFICIENCY' AND resolved = 1 ${userFilters.insp_ans}) +
+                (SELECT COUNT(*) FROM sickline_answers WHERE status = 'DEFICIENCY' AND resolved = 1 ${userFilters.sick_ans}) +
+                (SELECT COUNT(*) FROM commissionary_answers WHERE status = 'DEFICIENCY' AND resolved = 1 ${userFilters.comm_ans}) +
+                (SELECT COUNT(*) FROM cai_answers WHERE status = 'DEFICIENCY' AND resolved = 1 ${userFilters.cai_ans})
             ) AS total_resolved_defects,
             (
-                (SELECT COUNT(*) FROM wsp_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS')) +
-                (SELECT COUNT(*) FROM sickline_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS')) +
-                (SELECT COUNT(*) FROM commissionary_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS')) +
-                (SELECT COUNT(*) FROM cai_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS')) +
-                (SELECT COUNT(*) FROM pitline_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS'))
+                (SELECT COUNT(*) FROM wsp_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS') ${userFilters.wsp}) +
+                (SELECT COUNT(*) FROM sickline_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS') ${userFilters.sick}) +
+                (SELECT COUNT(*) FROM commissionary_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS') ${userFilters.comm}) +
+                (SELECT COUNT(*) FROM cai_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS') ${userFilters.cai}) +
+                (SELECT COUNT(*) FROM pitline_sessions WHERE status IN ('DRAFT', 'IN_PROGRESS') ${userFilters.pit})
             ) AS active_sessions_count
     `;
 
     const counts = await sequelize.query(countsQuery, {
-        replacements: { todayStart, todayEnd },
+        replacements,
         type: QueryTypes.SELECT
     });
 
     const perModuleQuery = `
-        SELECT 'WSP' as module_type, COUNT(*) as count FROM wsp_sessions
+        SELECT 'WSP' as module_type, COUNT(*) as count FROM wsp_sessions WHERE 1=1 ${userFilters.wsp}
         UNION ALL
-        SELECT 'SICKLINE', COUNT(*) FROM sickline_sessions
+        SELECT 'SICKLINE', COUNT(*) FROM sickline_sessions WHERE 1=1 ${userFilters.sick}
         UNION ALL
-        SELECT 'COMMISSIONARY', COUNT(*) FROM commissionary_sessions
+        SELECT 'COMMISSIONARY', COUNT(*) FROM commissionary_sessions WHERE 1=1 ${userFilters.comm}
         UNION ALL
-        SELECT 'CAI', COUNT(*) FROM cai_sessions
+        SELECT 'CAI', COUNT(*) FROM cai_sessions WHERE 1=1 ${userFilters.cai}
         UNION ALL
-        SELECT 'PITLINE', COUNT(*) FROM pitline_sessions
+        SELECT 'PITLINE', COUNT(*) FROM pitline_sessions WHERE 1=1 ${userFilters.pit}
     `;
-    const perModule = await sequelize.query(perModuleQuery, { type: QueryTypes.SELECT });
+    const perModule = await sequelize.query(perModuleQuery, { replacements, type: QueryTypes.SELECT });
 
     // Last 7 Days Trend (Dialect Aware)
     let trendQuery;
     if (isSQLite) {
         trendQuery = `
             SELECT date, SUM(count) as count FROM (
-                SELECT date(createdAt) as date, COUNT(*) as count FROM wsp_sessions WHERE createdAt >= date('now', '-6 days') GROUP BY date(createdAt)
+                SELECT date(createdAt) as date, COUNT(*) as count FROM wsp_sessions WHERE (createdAt >= date('now', '-6 days') ${userFilters.wsp}) GROUP BY date(createdAt)
                 UNION ALL
-                SELECT date(createdAt), COUNT(*) FROM sickline_sessions WHERE createdAt >= date('now', '-6 days') GROUP BY date(createdAt)
+                SELECT date(createdAt), COUNT(*) FROM sickline_sessions WHERE (createdAt >= date('now', '-6 days') ${userFilters.sick}) GROUP BY date(createdAt)
                 UNION ALL
-                SELECT date(createdAt), COUNT(*) FROM commissionary_sessions WHERE createdAt >= date('now', '-6 days') GROUP BY date(createdAt)
+                SELECT date(createdAt), COUNT(*) FROM commissionary_sessions WHERE (createdAt >= date('now', '-6 days') ${userFilters.comm}) GROUP BY date(createdAt)
                 UNION ALL
-                SELECT date(createdAt), COUNT(*) FROM cai_sessions WHERE createdAt >= date('now', '-6 days') GROUP BY date(createdAt)
+                SELECT date(createdAt), COUNT(*) FROM cai_sessions WHERE (createdAt >= date('now', '-6 days') ${userFilters.cai}) GROUP BY date(createdAt)
                 UNION ALL
-                SELECT date(createdAt), COUNT(*) FROM pitline_sessions WHERE createdAt >= date('now', '-6 days') GROUP BY date(createdAt)
+                SELECT date(createdAt), COUNT(*) FROM pitline_sessions WHERE (createdAt >= date('now', '-6 days') ${userFilters.pit}) GROUP BY date(createdAt)
             ) as t
             GROUP BY date
             ORDER BY date ASC
@@ -335,22 +369,22 @@ exports.getSummaryStats = async () => {
     } else {
         trendQuery = `
             SELECT date, SUM(count) as count FROM (
-                SELECT DATE(createdAt) as date, COUNT(*) as count FROM wsp_sessions WHERE createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY DATE(createdAt)
+                SELECT DATE(createdAt) as date, COUNT(*) as count FROM wsp_sessions WHERE (createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) ${userFilters.wsp}) GROUP BY DATE(createdAt)
                 UNION ALL
-                SELECT DATE(createdAt), COUNT(*) FROM sickline_sessions WHERE createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY DATE(createdAt)
+                SELECT DATE(createdAt), COUNT(*) FROM sickline_sessions WHERE (createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) ${userFilters.sick}) GROUP BY DATE(createdAt)
                 UNION ALL
-                SELECT DATE(createdAt), COUNT(*) FROM commissionary_sessions WHERE createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY DATE(createdAt)
+                SELECT DATE(createdAt), COUNT(*) FROM commissionary_sessions WHERE (createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) ${userFilters.comm}) GROUP BY DATE(createdAt)
                 UNION ALL
-                SELECT DATE(createdAt), COUNT(*) FROM cai_sessions WHERE createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY DATE(createdAt)
+                SELECT DATE(createdAt), COUNT(*) FROM cai_sessions WHERE (createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) ${userFilters.cai}) GROUP BY DATE(createdAt)
                 UNION ALL
-                SELECT DATE(createdAt), COUNT(*) FROM pitline_sessions WHERE createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) GROUP BY DATE(createdAt)
+                SELECT DATE(createdAt), COUNT(*) FROM pitline_sessions WHERE (createdAt >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) ${userFilters.pit}) GROUP BY DATE(createdAt)
             ) as t
             GROUP BY date
             ORDER BY date ASC
         `;
     }
 
-    const trend = await sequelize.query(trendQuery, { type: QueryTypes.SELECT });
+    const trend = await sequelize.query(trendQuery, { replacements, type: QueryTypes.SELECT });
 
     return {
         ...counts[0],

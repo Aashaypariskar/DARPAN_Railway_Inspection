@@ -12,7 +12,7 @@ class ReportQueryService {
         return FINALIZED_STATUSES.map(s => `'${s}'`).join(',');
     }
 
-    static _buildWhere(filters) {
+    static _buildWhere(filters, currentUser = null) {
         const { fromDate, toDate, moduleType, inspectorId } = filters;
         let where = 'rs.inspection_datetime BETWEEN :fromDate AND :toDate';
         let replacements = { fromDate, toDate };
@@ -22,7 +22,11 @@ class ReportQueryService {
             replacements.moduleType = moduleType;
         }
 
-        if (inspectorId) {
+        // --- DATA ISOLATION ---
+        if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+            where += ' AND rs.user_id = :currentUserId';
+            replacements.currentUserId = currentUser.id;
+        } else if (inspectorId) {
             where += ' AND rs.user_id = :inspectorId';
             replacements.inspectorId = inspectorId;
         }
@@ -33,8 +37,8 @@ class ReportQueryService {
     /**
      * Get Report Summary
      */
-    static async getSummaryReport(filters) {
-        const { where, replacements } = this._buildWhere(filters);
+    static async getSummaryReport(filters, currentUser) {
+        const { where, replacements } = this._buildWhere(filters, currentUser);
         const statusList = this.getStatusFilter();
 
         const sql = `
@@ -55,10 +59,10 @@ class ReportQueryService {
     /**
      * Get Inspector Performance Report
      */
-    static async getInspectorReport(filters) {
+    static async getInspectorReport(filters, currentUser) {
         const { fromDate, toDate, page = 1, limit = 10 } = filters;
         const offset = (page - 1) * limit;
-        const { where, replacements } = this._buildWhere(filters);
+        const { where, replacements } = this._buildWhere(filters, currentUser);
         const statusList = this.getStatusFilter();
 
         const sql = `
@@ -92,10 +96,10 @@ class ReportQueryService {
     /**
      * Get Asset Performance (Train/Coach)
      */
-    static async getAssetReport(filters) {
+    static async getAssetReport(filters, currentUser) {
         const { page = 1, limit = 10 } = filters;
         const offset = (page - 1) * limit;
-        const { where, replacements } = this._buildWhere(filters);
+        const { where, replacements } = this._buildWhere(filters, currentUser);
 
         const statusList = this.getStatusFilter();
 
@@ -128,10 +132,10 @@ class ReportQueryService {
     /**
      * Get Defect Aging Analysis
      */
-    static async getAgingReport(filters) {
+    static async getAgingReport(filters, currentUser) {
         const { page = 1, limit = 10 } = filters;
         const offset = (page - 1) * limit;
-        const { where, replacements } = this._buildWhere(filters);
+        const { where, replacements } = this._buildWhere(filters, currentUser);
 
         const sql = `
             SELECT 
@@ -173,10 +177,10 @@ class ReportQueryService {
     /**
      * Get Repeated Defects
      */
-    static async getRepeatedReport(filters) {
+    static async getRepeatedReport(filters, currentUser) {
         const { page = 1, limit = 10 } = filters;
         const offset = (page - 1) * limit;
-        const { where, replacements } = this._buildWhere(filters);
+        const { where, replacements } = this._buildWhere(filters, currentUser);
 
         const sql = `
             SELECT 
@@ -219,7 +223,7 @@ class ReportQueryService {
     /**
      * Get Recent Sessions (History)
      */
-    static async getRecentSessions(filters) {
+    static async getRecentSessions(filters, currentUser) {
         const { page = 1, limit = 10, fromDate, toDate } = filters;
         const offset = (page - 1) * limit;
 
@@ -227,7 +231,7 @@ class ReportQueryService {
         let replacements = { limit, offset };
 
         if (fromDate && toDate) {
-            const { where, replacements: r } = this._buildWhere(filters);
+            const { where, replacements: r } = this._buildWhere(filters, currentUser);
             whereClause = where;
             replacements = { ...replacements, ...r };
         } else {
@@ -236,7 +240,12 @@ class ReportQueryService {
                 whereClause += ' AND rs.module_type = :moduleType';
                 replacements.moduleType = filters.moduleType;
             }
-            if (filters.inspectorId) {
+
+            // --- DATA ISOLATION ---
+            if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+                whereClause += ' AND rs.user_id = :currentUserId';
+                replacements.currentUserId = currentUser.id;
+            } else if (filters.inspectorId) {
                 whereClause += ' AND rs.user_id = :inspectorId';
                 replacements.inspectorId = filters.inspectorId;
             }
@@ -276,8 +285,16 @@ class ReportQueryService {
      * Get Strategic Dashboard Aggregate Metrics
      * Focused strictly on Compliance Health, Risk visibility, and Trend awareness.
      */
-    static async getStrategicDashboard() {
+    static async getStrategicDashboard(currentUser) {
         const statuses = this.getStatusFilter();
+
+        // Isolation Logic: Non-admins only see their own records
+        let userFilter = '';
+        let replacements = {};
+        if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+            userFilter = ' AND user_id = :userId';
+            replacements.userId = currentUser.id;
+        }
 
         // 1. Compliance Health (Overall KPI)
         const healthSql = `
@@ -288,7 +305,7 @@ class ReportQueryService {
                 SUM(total_master_questions) as total_questions,
                 SUM(total_deficiencies - total_resolved) as open_defects
             FROM reporting_sessions
-            WHERE UPPER(status) IN (${statuses})
+            WHERE UPPER(status) IN (${statuses}) ${userFilter}
         `;
 
         // 2. Risk Hotspots (Bar Chart: Defect Rate By Module)
@@ -299,6 +316,7 @@ class ReportQueryService {
                 SUM(total_master_questions) as total_questions,
                 (SUM(total_deficiencies) / NULLIF(SUM(total_master_questions), 0) * 100) as defect_rate
             FROM reporting_sessions
+            WHERE 1=1 ${userFilter}
             GROUP BY UPPER(module_type)
         `;
 
@@ -309,7 +327,7 @@ class ReportQueryService {
                 AVG(compliance_score) as daily_compliance,
                 COUNT(*) as daily_inspections
             FROM reporting_sessions
-            WHERE UPPER(status) IN (${statuses})
+            WHERE UPPER(status) IN (${statuses}) ${userFilter}
               AND inspection_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY DATE(inspection_datetime)
             HAVING daily_inspections >= 1
@@ -323,6 +341,7 @@ class ReportQueryService {
                 COUNT(*) as session_count,
                 SUM(CASE WHEN (UPPER(status) NOT IN (${statuses})) AND (inspection_datetime < DATE_SUB(NOW(), INTERVAL 24 HOUR)) THEN 1 ELSE 0 END) as overdue_count
             FROM reporting_sessions
+            WHERE 1=1 ${userFilter}
             GROUP BY UPPER(status)
         `;
 
@@ -332,14 +351,15 @@ class ReportQueryService {
                 UPPER(module_type) as module_type,
                 COUNT(*) as session_count
             FROM reporting_sessions
+            WHERE 1=1 ${userFilter}
             GROUP BY UPPER(module_type)
         `;
 
-        // 4c. Overall Overdue Metrics (Global)
+        // 4c. Overall Overdue Metrics (Global context within user scope)
         const overdueSql = `
             SELECT COUNT(*) as global_overdue
             FROM reporting_sessions
-            WHERE UPPER(status) NOT IN (${statuses})
+            WHERE UPPER(status) NOT IN (${statuses}) ${userFilter}
               AND inspection_datetime < DATE_SUB(NOW(), INTERVAL 24 HOUR)
         `;
 
@@ -353,7 +373,7 @@ class ReportQueryService {
                 SUM(total_deficiencies) as total_deficiency_count,
                 COUNT(*) as inspection_count
             FROM reporting_sessions
-            WHERE UPPER(status) IN (${statuses})
+            WHERE UPPER(status) IN (${statuses}) ${userFilter}
               AND train_id IS NOT NULL 
               AND coach_id IS NOT NULL
             GROUP BY train_id, coach_id, module_type
@@ -363,6 +383,13 @@ class ReportQueryService {
         `;
 
         // 6. Critical Alerts (Attention Required: Active Deficiencies)
+        let alertFilter = '';
+        let alertReplacements = {};
+        if (currentUser && currentUser.role !== 'SUPER_ADMIN') {
+            alertFilter = ' AND rs.user_id = :userId';
+            alertReplacements.userId = currentUser.id;
+        }
+
         const criticalAlertsSql = `
             SELECT 
                 rs.train_id as train_no,
@@ -374,20 +401,23 @@ class ReportQueryService {
             JOIN reporting_sessions rs ON ra.reporting_session_id = rs.id
             WHERE UPPER(ra.answer_status) = 'DEFICIENCY'
               AND UPPER(rs.status) NOT IN ('FINALIZED', 'COMPLETED')
-              AND (ra.resolved = 0 OR ra.resolved IS NULL)
+              AND (ra.resolved = 0 OR ra.resolved IS NULL) 
+              ${alertFilter} 
             ORDER BY rs.created_at DESC
             LIMIT 5
         `;
 
+        // alertsResult uses alertReplacements defined above
+
         const [healthResult, riskResult, trendResult, pipelineResult, assetsResult, alertsResult, moduleDistResult, overdueResult] = await Promise.all([
-            sequelize.query(healthSql, { type: QueryTypes.SELECT }),
-            sequelize.query(riskSql, { type: QueryTypes.SELECT }),
-            sequelize.query(trendSql, { type: QueryTypes.SELECT }),
-            sequelize.query(pipelineSql, { type: QueryTypes.SELECT }),
-            sequelize.query(highRiskAssetsSql, { type: QueryTypes.SELECT }),
-            sequelize.query(criticalAlertsSql, { type: QueryTypes.SELECT }),
-            sequelize.query(moduleDistSql, { type: QueryTypes.SELECT }),
-            sequelize.query(overdueSql, { type: QueryTypes.SELECT })
+            sequelize.query(healthSql, { replacements, type: QueryTypes.SELECT }),
+            sequelize.query(riskSql, { replacements, type: QueryTypes.SELECT }),
+            sequelize.query(trendSql, { replacements, type: QueryTypes.SELECT }),
+            sequelize.query(pipelineSql, { replacements, type: QueryTypes.SELECT }),
+            sequelize.query(highRiskAssetsSql, { replacements, type: QueryTypes.SELECT }),
+            sequelize.query(criticalAlertsSql, { replacements: alertReplacements, type: QueryTypes.SELECT }),
+            sequelize.query(moduleDistSql, { replacements, type: QueryTypes.SELECT }),
+            sequelize.query(overdueSql, { replacements, type: QueryTypes.SELECT })
         ]);
 
         const health = healthResult[0] || {};

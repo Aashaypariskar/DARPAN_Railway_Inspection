@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { BASE_URL, ENV_NAME, PROD_URLS, IS_DEV } from '../config/environment';
 import { Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import FileSystem from 'expo-file-system';
 
 let currentBaseIndex = 0;
 
@@ -371,7 +371,7 @@ export const getCombinedReport = async (params) => {
     return res.data;
 };
 
-export const getDefects = (params) => api.get('/inspection/defects', { params }).then(res => res.data);
+export const getDefects = (params) => api.get('/inspection/defects', { params: { ...params, _t: Date.now() } }).then(res => res.data);
 export const resolveDefect = async (defectId, moduleType, remark, imageUri) => {
     try {
         let uploadedPhotoUrl = null;
@@ -430,23 +430,23 @@ export const uploadPhoto = async (localUri) => {
         ? `file://${localUri}`
         : localUri;
 
-    console.log('[UPLOAD] Uploading photo via FileSystem:', formattedUri);
+    console.log('[UPLOAD] Uploading photo via axios:', formattedUri);
 
     try {
-        const response = await FileSystem.uploadAsync(
-            `${BASE_URL}/upload-photo`,
-            formattedUri,
-            {
-                fieldName: 'photo',
-                httpMethod: 'POST',
-                uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        const formData = new FormData();
+        formData.append('photo', {
+            uri: formattedUri,
+            type: 'image/jpeg',
+            name: 'photo.jpg'
+        });
 
-        const data = JSON.parse(response.body);
+        const response = await api.post('/upload-photo', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        const data = response.data;
 
         if (response.status !== 200 || !data.success) {
             throw new Error(data?.error || `Upload failed with status ${response.status}`);

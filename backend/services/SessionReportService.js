@@ -4,6 +4,14 @@ const {
 } = require('../models');
 const { QueryTypes } = require('sequelize');
 
+const BASE_URL = process.env.BASE_URL || 'http://192.168.1.4:8080';
+
+const toAbsoluteUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}/${path.replace(/^\/+/, '')}`;
+};
+
 /**
  * Session Report Service - PROJECTION LAYER EDITION
  * Unified READ-ONLY access to session data across all modules via projection tables.
@@ -102,8 +110,8 @@ class SessionReportService {
                 status: currStatus,
                 reasons: Array.isArray(resolvedReasons) ? resolvedReasons : [],
                 remark: String(ans.remark || '').trim(),
-                beforeImage: ans.before_photo_url || null,
-                afterImage: ans.after_photo_url || null,
+                beforeImage: toAbsoluteUrl(ans.before_photo_url) || null,
+                afterImage: toAbsoluteUrl(ans.after_photo_url) || null,
                 section: String(ans.section_title || 'General'),
                 activity: String(ans.activity_type || 'General'),
                 resolved: !!ans.resolved,

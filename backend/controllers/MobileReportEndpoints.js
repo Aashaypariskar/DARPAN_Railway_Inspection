@@ -3,6 +3,15 @@ const { sequelize } = require('../models');
 // Extract unique filter options for Mobile App drop-downs
 exports.getMobileReportFilters = async (req, res) => {
     try {
+        let whereClause = "UPPER(status) IN ('FINALIZED', 'COMPLETED', 'SUBMITTED')";
+        const replacements = {};
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            whereClause += " AND user_id = :userId";
+            replacements.userId = req.user.id;
+        }
+
         const sql = `
             SELECT DISTINCT 
                 train_id as train_no, 
@@ -10,10 +19,10 @@ exports.getMobileReportFilters = async (req, res) => {
                 module_type as inspection_type,
                 status as activity_type
             FROM reporting_sessions
-            WHERE UPPER(status) IN ('FINALIZED', 'COMPLETED', 'SUBMITTED')
+            WHERE ${whereClause}
         `;
         
-        const results = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+        const results = await sequelize.query(sql, { replacements, type: sequelize.QueryTypes.SELECT });
 
         const trains = [...new Set(results.map(r => r.train_no).filter(Boolean))];
         const coaches = [...new Set(results.map(r => r.coach_no).filter(Boolean))];
@@ -43,6 +52,12 @@ exports.getMobileReports = async (req, res) => {
 
         let whereClause = "UPPER(rs.status) IN ('FINALIZED', 'COMPLETED', 'SUBMITTED')";
         let replacements = { limit: parseInt(limit), offset: parseInt(offset) };
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            whereClause += " AND rs.user_id = :userId";
+            replacements.userId = req.user.id;
+        }
 
         if (train_no) { whereClause += " AND rs.train_id = :train_no"; replacements.train_no = train_no; }
         if (coach_no) { whereClause += " AND rs.coach_id = :coach_no"; replacements.coach_no = coach_no; }

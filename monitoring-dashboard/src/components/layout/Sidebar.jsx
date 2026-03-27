@@ -8,7 +8,7 @@ import {
     BarChart3,
     Users
 } from 'lucide-react';
-import railwayLogo from '../../assets/railway_logo.jpg';
+import railwayLogo from '../../assets/DARPAN_Logo.png';
 
 const Sidebar = () => {
     const { canManageUsers } = useAuth();

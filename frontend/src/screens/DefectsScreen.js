@@ -41,15 +41,17 @@ const DefectsScreen = ({ route, navigation }) => {
     const fetchDefects = async () => {
         try {
             setLoading(true);
-            const { session_id, module_type } = params;
+            const normalizedType = (params.module_type || params.type || '').toUpperCase().trim();
+            const category = (params.categoryName || params.category_name || '').trim();
 
             // Standardize module type for backend
             let type = 'GENERIC';
-            if (module_type === 'cai' || params.type === 'CAI') type = 'CAI';
-            else if (module_type === 'commissionary' || params.categoryName === 'Coach Commissionary') type = 'COMMISSIONARY';
-            else if (module_type === 'sickline' || params.categoryName === 'Sick Line Examination') type = 'SICKLINE';
-            else if (module_type === 'PITLINE' || params.module_type === 'PITLINE' || params.categoryName === 'Pit Line Examination') type = 'PITLINE';
-            else if (params.mode === 'WSP' || params.categoryName === 'WSP Examination') type = 'WSP';
+            if (normalizedType === 'CAI') type = 'CAI';
+            else if (normalizedType === 'COMMISSIONARY' || category === 'Coach Commissionary') type = 'COMMISSIONARY';
+            else if (normalizedType === 'SICKLINE' || category === 'Sick Line Examination') type = 'SICKLINE';
+            else if (normalizedType === 'PITLINE' || category === 'Pit Line Examination') type = 'PITLINE';
+            else if (params.mode === 'WSP' || category === 'WSP Examination') type = 'WSP';
+            else if (normalizedType === 'AMENITY') type = 'AMENITY';
 
             const response = await getDefects({
                 session_id: params.session_id,

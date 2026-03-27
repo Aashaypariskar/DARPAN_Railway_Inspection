@@ -5,7 +5,7 @@ import { BASE_URL } from '../config/environment';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
-import { StorageAccessFramework } from 'expo-file-system';
+import { StorageAccessFramework } from 'expo-file-system/legacy';
 import { Ionicons } from '@expo/vector-icons';
 import AppHeader from '../components/AppHeader';
 import { COLORS, SPACING, RADIUS } from '../config/theme';
@@ -203,29 +203,60 @@ const ReportDetailScreen = ({ route, navigation }) => {
         try {
             setIsDownloading(true);
             const html = generateHtml();
-            const { uri } = await Print.printToFileAsync({ html });
-            const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+            const { uri } = await Print.printToFileAsync({ html }).catch(e => { throw new Error('PDF Generation failed: ' + e.message); });
+            console.log('PDF URI:', uri);
+
+            if (!StorageAccessFramework) {
+                console.warn('StorageAccessFramework is missing, falling back to Sharing');
+                await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' }).catch(e => {
+                    throw new Error('Sharing failed: ' + e.message);
+                });
+                return;
+            }
+
+            const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync().catch(e => { throw new Error('Directory Permission failed: ' + e.message); });
             if (!permissions.granted) {
                 Alert.alert('Permission Denied', 'Unable to save to device storage without permission.');
                 return;
             }
-            const response = await fetch(uri);
-            const blob = await response.blob();
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            await new Promise((resolve) => {
-                reader.onloadend = () => resolve(reader.result);
-            });
-            const base64data = reader.result.replace(/^data:.+;base64,/, '');
+
+            let base64data;
+            try {
+                // Primary Strategy: Direct FileSystem read
+                base64data = await FileSystem.readAsStringAsync(uri, {
+                    encoding: 'base64',
+                });
+            } catch (err) {
+                console.warn('FileSystem read failed, falling back to fetch:', err);
+                try {
+                    const response = await fetch(uri);
+                    const blob = await response.blob();
+                    base64data = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            const base64 = reader.result.replace(/^data:.+;base64,/, '');
+                            resolve(base64);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (fetchErr) {
+                    throw new Error('Base64 Conversion failed: ' + fetchErr.message);
+                }
+            }
+
             const safeTrain = String(train_number || 'NA').replace(/[^a-zA-Z0-9]/g, '_');
             const safeCoach = String(coach_number || 'NA').replace(/[^a-zA-Z0-9]/g, '_');
             const subStr = String(submission_id || 'UNKNOWN').substring(0, 8);
             const fileName = `Report_${safeTrain}_${safeCoach}_${subStr}.pdf`;
-            const safUri = await StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/pdf');
-            await StorageAccessFramework.writeAsStringAsync(safUri, base64data, { encoding: FileSystem.EncodingType.Base64 });
+
+            const safUri = await StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, 'application/pdf').catch(e => { throw new Error('File Creation failed: ' + e.message); });
+            await StorageAccessFramework.writeAsStringAsync(safUri, base64data, { encoding: 'base64' }).catch(e => { throw new Error('File Write failed: ' + e.message); });
+            
             Alert.alert('Download Complete', 'PDF saved successfully.');
         } catch (err) {
-            Alert.alert('Error', 'Failed to download PDF.');
+            console.error('Download Error:', err);
+            Alert.alert('Error', err.message || 'Failed to download PDF.');
         } finally {
             setIsDownloading(false);
         }

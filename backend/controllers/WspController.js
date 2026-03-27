@@ -7,8 +7,15 @@ const { Op } = require('sequelize');
 // GET /api/wsp/coaches
 exports.listCoaches = async (req, res) => {
     try {
+        const where = { module_type: 'WSP' };
+        
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN') {
+            where.created_by = req.user.id;
+        }
+
         const coaches = await Coach.findAll({
-            where: { module_type: 'WSP' },
+            where,
             order: [['createdAt', 'DESC']]
         });
         res.json(coaches);
@@ -319,6 +326,13 @@ exports.getAnswers = async (req, res) => {
             session = await WspSession.findByPk(session_id, { include: [Coach] });
         }
 
+        if (!session) return res.status(404).json({ error: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized: Session ownership mismatch' });
+        }
+
         const coach_number = session?.Coach?.coach_number;
         if (!coach_number) {
             console.log('[WSP ANSWERS] No coach found for session');
@@ -382,6 +396,11 @@ exports.getProgress = async (req, res) => {
             session = await WspSession.findOne({
                 where: { coach_id: coach.id, inspection_date: today }
             });
+        }
+
+        // --- DATA ISOLATION ---
+        if (session && req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
         }
 
         if (!session) {
@@ -468,6 +487,11 @@ exports.submitSession = async (req, res) => {
 
         const session = await WspSession.findByPk(session_id, { include: [Coach] });
         if (!session) return res.status(404).json({ error: 'Session not found' });
+
+        // --- DATA ISOLATION ---
+        if (req.user && req.user.role !== 'SUPER_ADMIN' && session.created_by !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
 
         // Submission Integrity Check: Ensure all schedules have been addressed
         const coach = session.Coach;
