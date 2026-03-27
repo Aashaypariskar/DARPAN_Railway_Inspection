@@ -380,7 +380,11 @@ export const resolveDefect = async (defectId, moduleType, remark, imageUri) => {
         // We will reuse that exact working method here.
         if (imageUri) {
             console.log(`[RESOLVE] Uploading photo first via proven uploadPhoto API...`);
-            uploadedPhotoUrl = await uploadPhoto(imageUri);
+            uploadedPhotoUrl = await uploadPhoto({
+                uri: imageUri,
+                module_type: moduleType,
+                image_stage: 'after'
+            });
 
             if (!uploadedPhotoUrl) {
                 throw new Error("Failed to upload the photo to the server.");
@@ -413,10 +417,22 @@ export const resolveDefect = async (defectId, moduleType, remark, imageUri) => {
 /**
  * Upload a local photo URI to the server and get back a server-hosted URL.
  * This must be called BEFORE autosave for any module that needs images visible on the dashboard.
- * @param {string} localUri - Local file:// or content:// URI from device camera/gallery
+ * @param {string|object} paramsOrUri - Local file URI OR structured object containing { uri, module_type, session_id, question_id, image_stage }
  * @returns {string} Server-hosted URL like /uploads/photo-12345.jpeg
  */
-export const uploadPhoto = async (localUri) => {
+export const uploadPhoto = async (paramsOrUri) => {
+    let localUri, moduleType, sessionId, questionId, imageStage;
+
+    if (typeof paramsOrUri === 'string') {
+        localUri = paramsOrUri;
+    } else if (paramsOrUri && typeof paramsOrUri === 'object') {
+        localUri = paramsOrUri.uri;
+        moduleType = paramsOrUri.module_type;
+        sessionId = paramsOrUri.session_id;
+        questionId = paramsOrUri.question_id;
+        imageStage = paramsOrUri.image_stage;
+    }
+
     if (!localUri) return null;
 
     if (localUri.startsWith('http') || localUri.startsWith('/uploads/')) {
@@ -439,6 +455,11 @@ export const uploadPhoto = async (localUri) => {
             type: 'image/jpeg',
             name: 'photo.jpg'
         });
+
+        if (moduleType) formData.append('module_type', moduleType);
+        if (sessionId) formData.append('session_id', sessionId);
+        if (questionId) formData.append('question_id', questionId);
+        if (imageStage) formData.append('image_stage', imageStage);
 
         const response = await api.post('/upload-photo', formData, {
             headers: {
@@ -464,7 +485,13 @@ export const autosaveInspection = async (payload) => {
     // Optional: handle photo upload if needed (already in your version)
     if (payload.photo_url && (payload.photo_url.startsWith('file://') || payload.photo_url.startsWith('content://'))) {
         try {
-            const uploaded = await uploadPhoto(payload.photo_url);
+            const uploaded = await uploadPhoto({
+                uri: payload.photo_url,
+                module_type: payload.module_type,
+                session_id: payload.session_id,
+                question_id: payload.question_id,
+                image_stage: 'before'
+            });
             if (uploaded) payload.photo_url = uploaded;
         } catch (e) {
             console.warn('[AUTOSAVE] Photo upload failed, continuing without');

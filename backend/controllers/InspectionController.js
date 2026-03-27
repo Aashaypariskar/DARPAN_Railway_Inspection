@@ -941,9 +941,17 @@ exports.saveCheckpoint = async (req, res) => {
                 const transaction = await sequelize.transaction();
                 try {
                     // Filter requested update fields dynamically based on model attributes
-                    const allowedFields = Object.keys(AnswerModel.rawAttributes).filter(field => field !== 'id' && field !== 'createdAt');
+                    // CRITICAL: Exclude resolution-state fields to prevent checkpoint saves from
+                    // overwriting a defect that was previously resolved via resolveDefect().
+                    const RESOLUTION_PROTECTED_FIELDS = new Set([
+                        'resolved', 'resolved_at', 'resolved_by', 'resolution_remark', 'after_photo_url'
+                    ]);
 
-
+                    const allowedFields = Object.keys(AnswerModel.rawAttributes).filter(field =>
+                        field !== 'id' &&
+                        field !== 'createdAt' &&
+                        !RESOLUTION_PROTECTED_FIELDS.has(field)
+                    );
 
                     await AnswerModel.bulkCreate(upsertDataArray, {
                         updateOnDuplicate: allowedFields.length > 0 ? allowedFields : undefined,

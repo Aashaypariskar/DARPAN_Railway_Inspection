@@ -394,7 +394,13 @@ const CommissionaryQuestionsScreen = ({ route, navigation }) => {
                 if (finalPhotoUrl && (finalPhotoUrl.startsWith('file://') || finalPhotoUrl.startsWith('content://'))) {
                     try {
                         const { uploadPhoto } = require('../api/api'); // Imports fallback
-                        const uploaded = await uploadPhoto(finalPhotoUrl);
+                        const uploaded = await uploadPhoto({
+                            uri: finalPhotoUrl,
+                            module_type: answerContext.module_type,
+                            session_id: answerContext.session_id,
+                            question_id: getQuestionId(q),
+                            image_stage: 'before'
+                        });
                         if (uploaded) {
                             finalPhotoUrl = uploaded;
                             // Update map so we don't re-upload if they stay on screen
@@ -680,7 +686,13 @@ const CommissionaryQuestionsScreen = ({ route, navigation }) => {
                                         if (finalPhotoUrl && (finalPhotoUrl.startsWith('file://') || finalPhotoUrl.startsWith('content://'))) {
                                             try {
                                                 const { uploadPhoto } = require('../api/api');
-                                                const uploaded = await uploadPhoto(finalPhotoUrl);
+                                                const uploaded = await uploadPhoto({
+                                                    uri: finalPhotoUrl,
+                                                    module_type: answerContext.module_type,
+                                                    session_id: answerContext.session_id,
+                                                    question_id: isNaN(parsedId) ? null : parsedId,
+                                                    image_stage: 'before'
+                                                });
                                                 if (uploaded) {
                                                     finalPhotoUrl = uploaded;
                                                     setAnswersMap(prev => ({ ...prev, [key]: { ...prev[key], photo_url: uploaded } }));

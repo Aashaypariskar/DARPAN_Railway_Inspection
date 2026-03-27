@@ -64,7 +64,13 @@ const CaiQuestionsScreen = ({ route, navigation }) => {
                 let serverPhotoUrl = data.photo_url;
                 if (data.photo_url && (data.photo_url.startsWith('file://') || data.photo_url.startsWith('content://'))) {
                     try {
-                        serverPhotoUrl = await uploadPhoto(data.photo_url);
+                        serverPhotoUrl = await uploadPhoto({
+                            uri: data.photo_url,
+                            module_type: 'CAI',
+                            session_id: sessionId,
+                            question_id: qId,
+                            image_stage: 'before'
+                        });
                     } catch (uploadErr) {
                         console.error('[CAI PHOTO UPLOAD ERROR]', uploadErr);
                     }
