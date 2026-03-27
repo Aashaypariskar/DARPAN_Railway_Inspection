@@ -1,5 +1,12 @@
 const express = require('express');
 const cors = require('cors');
+
+// GLOBAL LOGGER: First middleware to capture EVERY request, including preflights
+const logRequest = (req, res, next) => {
+    const origin = req.headers.origin || 'No Origin';
+    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url} (Origin: ${origin})`);
+    next();
+};
 const sequelize = require('./config/db');
 const auditRoutes = require('./routes/AuditRoutes');
 const authRoutes = require('./routes/AuthRoutes');
@@ -13,6 +20,8 @@ const fs = require('fs');
 const inspectionController = require('./controllers/InspectionController');
 
 const app = express();
+app.use(logRequest);
+
 const PORT = process.env.PORT || 8080;
 
 // Dynamic Base Path Handling (e.g., '/inspection' or '')
@@ -27,14 +36,24 @@ const toAbsoluteUrl = (path) => {
   return `${BASE_URL}/${path.replace(/^\/+/, '')}`;
 };
 
+const isDevEnv = process.env.NODE_ENV === 'development';
+
 const corsOptions = {
     origin: function (origin, callback) {
+        if (!origin || isDevEnv) {
+            callback(null, true);
+            return;
+        }
+
         const allowedOrigins = [
             'http://localhost:3001',
             'http://localhost:8080',
             'https://localhost:8081',
             'http://localhost:8081',
             'http://localhost:19006',
+            'http://192.168.1.4:8081',
+            'http://192.168.1.4:8082',
+            'http://192.168.1.4:3001',
             'https://meetofy.in',
             'http://meetofy.in',
             'http://192.168.1.2:3001',
@@ -42,23 +61,27 @@ const corsOptions = {
             'https://192.168.1.2:8081',
             'http://192.168.1.2:8080',
             'http://192.168.1.12:8080',
-            'http://10.178.240.216:8080',
             "https://uatdarpan.premade.in",
-            'https://darpan.premade.in  ',
+            'https://darpan.premade.in',
             'https://railway-inspection-181711399428.us-central1.run.app'
         ];
 
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.warn(`[CORS REJECTION] Origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-module-type', 'x-session-id', 'x-image-stage', 'x-question-id'],
     credentials: true,
 };
 
 app.use(cors(corsOptions));
+
+app.use(cors(corsOptions));
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
@@ -158,6 +181,8 @@ const upload = require('./middleware/upload');
 const uploadAny = multer({ storage: upload.storage });
 
 app.post(`${BASE_PATH}/api/upload-photo`, verifyToken, (req, res, next) => {
+    // Log metadata from query params (arrives before multer body parsing)
+    console.log('[PHOTO UPLOAD] Query params:', req.query);
     uploadAny.single('photo')(req, res, (err) => {
         if (err) {
             console.error('[PHOTO UPLOAD ERROR] Multer error:', err.message);

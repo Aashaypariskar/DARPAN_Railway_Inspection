@@ -372,17 +372,18 @@ export const getCombinedReport = async (params) => {
 };
 
 export const getDefects = (params) => api.get('/inspection/defects', { params: { ...params, _t: Date.now() } }).then(res => res.data);
-export const resolveDefect = async (defectId, moduleType, remark, imageUri) => {
+export const resolveDefect = async (defectId, moduleType, remark, imageUri, sessionId, questionId) => {
     try {
         let uploadedPhotoUrl = null;
 
-        // The user noted that the initial photo upload ALWAYS works.
-        // We will reuse that exact working method here.
+        // Using the refactored uploadPhoto with full metadata
         if (imageUri) {
-            console.log(`[RESOLVE] Uploading photo first via proven uploadPhoto API...`);
+            console.log(`[RESOLVE] Uploading "after" photo with metadata:`, { moduleType, sessionId, questionId });
             uploadedPhotoUrl = await uploadPhoto({
                 uri: imageUri,
                 module_type: moduleType,
+                session_id: sessionId,
+                question_id: questionId,
                 image_stage: 'after'
             });
 
@@ -450,22 +451,29 @@ export const uploadPhoto = async (paramsOrUri) => {
 
     try {
         const formData = new FormData();
+
+        // ONLY append the file - no text fields needed.
+        // Metadata is passed via URL query parameters (see below), which are
+        // parsed by Express BEFORE multer processes the multipart body.
+        // This is the only reliable way on React Native to pass metadata alongside a file.
         formData.append('photo', {
             uri: formattedUri,
             type: 'image/jpeg',
             name: 'photo.jpg'
         });
 
-        if (moduleType) formData.append('module_type', moduleType);
-        if (sessionId) formData.append('session_id', sessionId);
-        if (questionId) formData.append('question_id', questionId);
-        if (imageStage) formData.append('image_stage', imageStage);
+    const uploadEndpoint = '/upload-photo';
 
-        const response = await api.post('/upload-photo', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
+    const response = await api.post(uploadEndpoint, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'x-module-type': moduleType || '',
+            'x-session-id': String(sessionId || ''),
+            'x-image-stage': imageStage || 'before',
+            'x-question-id': String(questionId || ''),
+        },
+        timeout: 60000, 
+    });
 
         const data = response.data;
 

@@ -21,6 +21,7 @@ if (!CONFIGS[mode]) {
 const activeConfig = CONFIGS[mode];
 
 export const ENV_NAME = mode;
+export const IS_DEV = mode === 'development';
 export const BASE_URL = activeConfig.BASE_URL;
 export const PROD_URLS = [
     CONFIGS.production.BASE_URL,

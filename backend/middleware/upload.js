@@ -17,11 +17,11 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         try {
-            // 1. Extract hierarchy parameters from body or query securely
-            const moduleType = (req.body && req.body.module_type) || (req.query && req.query.module_type);
-            const sessionId = (req.body && req.body.session_id) || (req.query && req.query.session_id) || 'NO_SESSION';
-            const imageStage = (req.body && req.body.image_stage) || (req.query && req.query.image_stage) || 'before';
-            const questionId = (req.body && req.body.question_id) || (req.query && req.query.question_id);
+            // 1. Extract hierarchy parameters from body, query or custom headers securely
+            const moduleType = (req.body && req.body.module_type) || (req.query && req.query.module_type) || req.get('x-module-type');
+            const sessionId = (req.body && req.body.session_id) || (req.query && req.query.session_id) || req.get('x-session-id') || 'NO_SESSION';
+            const imageStage = (req.body && req.body.image_stage) || (req.query && req.query.image_stage) || req.get('x-image-stage') || 'before';
+            const questionId = (req.body && req.body.question_id) || (req.query && req.query.question_id) || req.get('x-question-id');
 
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
             const originalName = file && file.originalname ? file.originalname : 'photo.jpg';

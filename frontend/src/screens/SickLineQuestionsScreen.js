@@ -7,7 +7,8 @@ import {
     getSickLineProgress,
     autosaveInspection,
     saveInspectionCheckpoint,
-    submitSickLineInspection
+    submitSickLineInspection,
+    uploadPhoto
 } from '../api/api';
 import { Ionicons } from '@expo/vector-icons';
 import { bulkMarkQuestionsOk } from '../utils/bulkMarkQuestionsOk';
@@ -307,24 +308,29 @@ const SickLineQuestionsScreen = ({ route, navigation }) => {
                     observed_value: ans.observed_value
                 };
 
-                const formData = new FormData();
-                let hasPhoto = false;
                 if (ans.image_path && typeof ans.image_path === 'string') {
                     if (ans.image_path.startsWith('http')) {
                         payload.photo_url = ans.image_path;
                     } else {
-                        Object.keys(payload).forEach(key => {
-                            formData.append(key, key === 'reasons' ? JSON.stringify(payload[key]) : payload[key]);
-                        });
-                        const cleanUri = ans.image_path.startsWith('file://') ? ans.image_path : `file://${ans.image_path}`;
-                        formData.append('photo', { uri: cleanUri, name: cleanUri.split('/').pop() || `photo_${Date.now()}.jpg`, type: 'image/jpeg' });
-                        hasPhoto = true;
+                        // REFACTOR: Use the unified uploadPhoto utility for structured storage
+                        try {
+                            const uploaded = await uploadPhoto({
+                                uri: ans.image_path,
+                                module_type: 'SICKLINE',
+                                session_id: sessionId,
+                                question_id: qId,
+                                image_stage: 'before'
+                            });
+                            if (uploaded) payload.photo_url = uploaded;
+                        } catch (uploadErr) {
+                            console.error('[SICKLINE UPLOAD ERROR]', uploadErr);
+                        }
                     }
                 }
 
                 await saveInspectionCheckpoint({
                     ...answerContext,
-                    answers: [hasPhoto ? formData : payload]
+                    answers: [payload]
                 });
             }
 

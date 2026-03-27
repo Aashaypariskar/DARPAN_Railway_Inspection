@@ -97,7 +97,9 @@ const DefectsScreen = ({ route, navigation }) => {
                 defect.id,
                 (defect.module_type || params.module_type || 'GENERIC').toUpperCase(),
                 resolutionData.remark,
-                resolutionData.photo
+                resolutionData.photo,
+                defect.session_id,
+                defect.question_id
             );
 
             if (response.success) {
