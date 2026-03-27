@@ -19,6 +19,14 @@ const PORT = process.env.PORT || 8080;
 const BASE_PATH = process.env.BASE_PATH || '';
 console.log(`[INIT] Using BASE_PATH: "${BASE_PATH}"`);
 
+const BASE_URL = process.env.BASE_URL || 'http://192.168.1.4:8080';
+
+const toAbsoluteUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}/${path.replace(/^\/+/, '')}`;
+};
+
 const corsOptions = {
     origin: function (origin, callback) {
         const allowedOrigins = [
@@ -162,7 +170,7 @@ app.post(`${BASE_PATH}/api/upload-photo`, verifyToken, (req, res, next) => {
         console.warn('[PHOTO UPLOAD] No file received in request');
         return res.status(400).json({ error: 'No photo uploaded' });
     }
-    const photoUrl = `uploads/${req.file.filename}`;
+    const photoUrl = toAbsoluteUrl(`uploads/${req.file.filename}`);
     console.log(`[PHOTO UPLOAD] Saved: ${photoUrl} (${req.file.size} bytes, mimetype: ${req.file.mimetype})`);
     res.json({ success: true, photo_url: photoUrl });
 });

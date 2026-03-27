@@ -4,6 +4,10 @@ node_modules/
 dist/
 build/
 
+backend/uploads/
+.jks
+
+
 # Database
 *.sqlite
 *.sqlite-journal
